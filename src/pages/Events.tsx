@@ -30,9 +30,9 @@ const Events = () => {
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [eventType, setEventType] = useState<string>("");
+  const [eventType, setEventType] = useState<string>("all");
   const [eventTypes, setEventTypes] = useState<string[]>([]);
-  const [city, setCity] = useState<string>("");
+  const [city, setCity] = useState<string>("all");
   const [cities, setCities] = useState<string[]>([]);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -100,11 +100,11 @@ const Events = () => {
       );
     }
     
-    if (eventType) {
+    if (eventType && eventType !== "all") {
       result = result.filter(event => event.type === eventType);
     }
     
-    if (city) {
+    if (city && city !== "all") {
       result = result.filter(event => event.city === city);
     }
     
@@ -118,8 +118,8 @@ const Events = () => {
 
   const clearFilters = () => {
     setSearchQuery("");
-    setEventType("");
-    setCity("");
+    setEventType("all");
+    setCity("all");
   };
 
   return (
@@ -147,7 +147,7 @@ const Events = () => {
                   <SelectValue placeholder="Tipo de evento" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos los tipos</SelectItem>
+                  <SelectItem value="all">Todos los tipos</SelectItem>
                   {eventTypes.map(type => (
                     <SelectItem key={type} value={type}>
                       {type}
@@ -163,7 +163,7 @@ const Events = () => {
                   <SelectValue placeholder="Ciudad" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas las ciudades</SelectItem>
+                  <SelectItem value="all">Todas las ciudades</SelectItem>
                   {cities.map(city => (
                     <SelectItem key={city} value={city}>
                       {city}
