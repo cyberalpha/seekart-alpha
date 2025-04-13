@@ -11,6 +11,8 @@ import { Search, Calendar, MapPin } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+import { artTypes } from "./ArtistProfile";
 
 type Event = {
   id: string;
@@ -20,6 +22,7 @@ type Event = {
   address: string;
   city: string;
   type: string;
+  art_types?: string[];
   image_url: string;
   artist_id: string;
   artist_name?: string;
@@ -31,7 +34,6 @@ const Events = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [eventType, setEventType] = useState<string>("all");
-  const [eventTypes, setEventTypes] = useState<string[]>([]);
   const [city, setCity] = useState<string>("all");
   const [cities, setCities] = useState<string[]>([]);
   const { toast } = useToast();
@@ -63,10 +65,6 @@ const Events = () => {
           
           setEvents(transformedEvents);
           setFilteredEvents(transformedEvents);
-          
-          // Extract unique event types
-          const types = [...new Set(transformedEvents.map(event => event.type))];
-          setEventTypes(types);
           
           // Extract unique cities
           const cities = [...new Set(transformedEvents.map(event => event.city))];
@@ -101,7 +99,9 @@ const Events = () => {
     }
     
     if (eventType && eventType !== "all") {
-      result = result.filter(event => event.type === eventType);
+      result = result.filter(event => 
+        event.art_types?.includes(eventType) || event.type === eventType
+      );
     }
     
     if (city && city !== "all") {
@@ -120,6 +120,12 @@ const Events = () => {
     setSearchQuery("");
     setEventType("all");
     setCity("all");
+  };
+
+  // Función para obtener el tipo de arte y su color asociado
+  const getArtTypeDetails = (typeId: string) => {
+    const artType = artTypes.find(type => type.id === typeId);
+    return artType || { id: typeId, name: typeId, color: "bg-gray-500" };
   };
 
   return (
@@ -148,9 +154,9 @@ const Events = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos los tipos</SelectItem>
-                  {eventTypes.map(type => (
-                    <SelectItem key={type} value={type}>
-                      {type}
+                  {artTypes.map(type => (
+                    <SelectItem key={type.id} value={type.id}>
+                      {type.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -229,6 +235,28 @@ const Events = () => {
                     <MapPin size={16} className="mr-1 mt-1 flex-shrink-0" />
                     <span>{event.address}, {event.city}</span>
                   </div>
+                  
+                  {event.art_types && event.art_types.length > 0 ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {event.art_types.map(typeId => {
+                        const typeInfo = getArtTypeDetails(typeId);
+                        return (
+                          <Badge 
+                            key={typeId}
+                            className={`${typeInfo.color} text-white`}
+                          >
+                            {typeInfo.name}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="mt-3">
+                      <Badge className="bg-gray-500 text-white">
+                        {event.type}
+                      </Badge>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}

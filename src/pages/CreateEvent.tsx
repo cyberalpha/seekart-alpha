@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Upload, MapPin } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { artTypes } from "./ArtistProfile";
 
 const CreateEvent = () => {
   const [loading, setLoading] = useState(false);
@@ -22,6 +24,7 @@ const CreateEvent = () => {
   const [crossStreets, setCrossStreets] = useState("");
   const [locality, setLocality] = useState("");
   const [eventType, setEventType] = useState("");
+  const [selectedArtTypes, setSelectedArtTypes] = useState<string[]>([]);
   const [ticketUrl, setTicketUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -45,7 +48,10 @@ const CreateEvent = () => {
       // Upload image to storage
       const { error: uploadError } = await supabase.storage
         .from("events")
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
       
       if (uploadError) throw uploadError;
       
@@ -103,6 +109,16 @@ const CreateEvent = () => {
     }
   };
 
+  const handleToggleArtType = (typeId: string) => {
+    setSelectedArtTypes(prev => {
+      if (prev.includes(typeId)) {
+        return prev.filter(id => id !== typeId);
+      } else {
+        return [...prev, typeId];
+      }
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -114,6 +130,15 @@ const CreateEvent = () => {
           variant: "destructive",
           title: "Imagen requerida",
           description: "Debes subir una imagen para el evento.",
+        });
+        return;
+      }
+      
+      if (selectedArtTypes.length === 0) {
+        toast({
+          variant: "destructive",
+          title: "Tipo de arte requerido",
+          description: "Debes seleccionar al menos un tipo de arte para el evento.",
         });
         return;
       }
@@ -134,6 +159,7 @@ const CreateEvent = () => {
         cross_streets: crossStreets,
         locality,
         type: eventType,
+        art_types: selectedArtTypes,
         ticket_url: ticketUrl || null,
         video_url: videoUrl || null,
         image_url: imageUrl,
@@ -214,7 +240,26 @@ const CreateEvent = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="eventType">Tipo de evento *</Label>
+                  <Label>Tipo de arte *</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {artTypes.map(type => (
+                      <Badge 
+                        key={type.id}
+                        className={`cursor-pointer ${
+                          selectedArtTypes.includes(type.id) 
+                            ? type.color + ' text-white' 
+                            : 'bg-gray-200 text-gray-700'
+                        }`}
+                        onClick={() => handleToggleArtType(type.id)}
+                      >
+                        {type.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="eventType">Descripción del tipo de evento *</Label>
                   <Input
                     id="eventType"
                     value={eventType}

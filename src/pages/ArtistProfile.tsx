@@ -11,8 +11,18 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-import { UserRound, Upload, PlusCircle, Edit, Trash2 } from "lucide-react";
+import { UserRound, Upload, PlusCircle, Edit, Trash2, Facebook, Instagram, Link } from "lucide-react";
 import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+
+// Definir los tipos de arte disponibles con sus colores
+export const artTypes = [
+  { id: "musica", name: "Música", color: "bg-green-500" },
+  { id: "teatro", name: "Teatro", color: "bg-yellow-500" },
+  { id: "imagenes", name: "Imágenes y formas", color: "bg-red-500" },
+  { id: "letras", name: "Letras", color: "bg-blue-500" },
+  { id: "cine", name: "Cine", color: "bg-orange-500" },
+];
 
 type Event = {
   id: string;
@@ -25,6 +35,13 @@ type Event = {
   image_url: string;
 };
 
+type ArtistType = {
+  id: string;
+  name: string;
+  color: string;
+  selected: boolean;
+};
+
 const ArtistProfile = () => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -33,9 +50,11 @@ const ArtistProfile = () => {
   const [description, setDescription] = useState("");
   const [facebookUrl, setFacebookUrl] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
+  const [linktreeUrl, setLinktreeUrl] = useState("");
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
+  const [artistTypes, setArtistTypes] = useState<ArtistType[]>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -63,7 +82,17 @@ const ArtistProfile = () => {
           setDescription(artistData.description || "");
           setFacebookUrl(artistData.facebook_url || "");
           setInstagramUrl(artistData.instagram_url || "");
+          setLinktreeUrl(artistData.linktree_url || "");
           setProfileImageUrl(artistData.profile_image || null);
+          
+          // Inicializar los tipos de artista
+          const types = artistData.art_types || [];
+          setArtistTypes(
+            artTypes.map(type => ({
+              ...type,
+              selected: types.includes(type.id)
+            }))
+          );
         }
         
         // Fetch artist events
@@ -102,12 +131,19 @@ const ArtistProfile = () => {
         return;
       }
       
+      // Obtener los tipos de arte seleccionados
+      const selectedTypes = artistTypes
+        .filter(type => type.selected)
+        .map(type => type.id);
+      
       const updates = {
         name,
         last_name: lastName,
         description,
         facebook_url: facebookUrl,
         instagram_url: instagramUrl,
+        linktree_url: linktreeUrl,
+        art_types: selectedTypes,
         updated_at: new Date().toISOString(),
       };
       
@@ -158,7 +194,10 @@ const ArtistProfile = () => {
       // Upload image to storage
       const { error: uploadError } = await supabase.storage
         .from("profiles")
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
       
       if (uploadError) throw uploadError;
       
@@ -193,6 +232,12 @@ const ArtistProfile = () => {
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleToggleArtType = (index: number) => {
+    const updatedTypes = [...artistTypes];
+    updatedTypes[index].selected = !updatedTypes[index].selected;
+    setArtistTypes(updatedTypes);
   };
 
   const handleCreateEvent = () => {
@@ -317,7 +362,22 @@ const ArtistProfile = () => {
                           />
                         </div>
                         
-                        <div className="grid gap-4 md:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label>Tipo de arte</Label>
+                          <div className="flex flex-wrap gap-2">
+                            {artistTypes.map((type, index) => (
+                              <Badge 
+                                key={type.id}
+                                className={`cursor-pointer ${type.selected ? type.color + ' text-white' : 'bg-gray-200 text-gray-700'}`}
+                                onClick={() => handleToggleArtType(index)}
+                              >
+                                {type.name}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div className="grid gap-4 md:grid-cols-3">
                           <div className="space-y-2">
                             <Label htmlFor="facebookUrl">Facebook URL</Label>
                             <Input
@@ -335,6 +395,16 @@ const ArtistProfile = () => {
                               value={instagramUrl}
                               onChange={(e) => setInstagramUrl(e.target.value)}
                               placeholder="https://instagram.com/tu_perfil"
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="linktreeUrl">Linktree URL</Label>
+                            <Input
+                              id="linktreeUrl"
+                              value={linktreeUrl}
+                              onChange={(e) => setLinktreeUrl(e.target.value)}
+                              placeholder="https://linktr.ee/tu_perfil"
                             />
                           </div>
                         </div>
@@ -378,33 +448,60 @@ const ArtistProfile = () => {
                           <p className="text-base">{description}</p>
                         </div>
                         
-                        <div className="grid gap-4 md:grid-cols-2">
-                          {facebookUrl && (
-                            <div>
-                              <p className="text-sm font-medium text-gray-500">Facebook</p>
-                              <a
-                                href={facebookUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[#9b87f5] hover:text-[#8a76e4]"
-                              >
-                                {facebookUrl}
-                              </a>
+                        {artistTypes.some(type => type.selected) && (
+                          <div>
+                            <p className="text-sm font-medium text-gray-500 mb-2">Tipo de arte</p>
+                            <div className="flex flex-wrap gap-2">
+                              {artistTypes
+                                .filter(type => type.selected)
+                                .map(type => (
+                                  <Badge 
+                                    key={type.id}
+                                    className={`${type.color} text-white`}
+                                  >
+                                    {type.name}
+                                  </Badge>
+                                ))
+                              }
                             </div>
+                          </div>
+                        )}
+                        
+                        <div className="flex gap-4">
+                          {facebookUrl && (
+                            <a
+                              href={facebookUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#9b87f5] hover:text-[#8a76e4]"
+                              aria-label="Facebook"
+                            >
+                              <Facebook size={24} />
+                            </a>
                           )}
                           
                           {instagramUrl && (
-                            <div>
-                              <p className="text-sm font-medium text-gray-500">Instagram</p>
-                              <a
-                                href={instagramUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[#9b87f5] hover:text-[#8a76e4]"
-                              >
-                                {instagramUrl}
-                              </a>
-                            </div>
+                            <a
+                              href={instagramUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#9b87f5] hover:text-[#8a76e4]"
+                              aria-label="Instagram"
+                            >
+                              <Instagram size={24} />
+                            </a>
+                          )}
+                          
+                          {linktreeUrl && (
+                            <a
+                              href={linktreeUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#9b87f5] hover:text-[#8a76e4]"
+                              aria-label="Linktree"
+                            >
+                              <Link size={24} />
+                            </a>
                           )}
                         </div>
                         
