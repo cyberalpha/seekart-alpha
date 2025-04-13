@@ -26,7 +26,7 @@ function App() {
           <Route path="/auth" element={<Auth />} />
           <Route path="/artist-profile" element={<ArtistProfile />} />
           <Route path="/fan-profile" element={<FanProfile />} />
-          <Route path="/event-map" element={<EventMap />} />
+          <Route path="/map" element={<EventMap />} />
           <Route path="/events" element={<Events />} />
           <Route path="/artists" element={<Artists />} />
           <Route path="/donations" element={<Donations />} />
