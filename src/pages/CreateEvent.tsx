@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -140,6 +141,15 @@ const CreateEvent = () => {
         return;
       }
       
+      if (!latitude || !longitude) {
+        toast({
+          variant: "destructive",
+          title: "Ubicación requerida",
+          description: "Debes proporcionar la latitud y longitud del evento.",
+        });
+        return;
+      }
+      
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
@@ -149,12 +159,12 @@ const CreateEvent = () => {
       
       const eventData = {
         title,
-        description,
+        description: description || null, // Ahora puede ser null
         date,
-        address,
-        city,
-        cross_streets: crossStreets,
-        locality,
+        address: address || null, // Ahora puede ser null
+        city: city || null, // Ahora puede ser null
+        cross_streets: crossStreets || null, // Ahora puede ser null
+        locality: locality || null, // Ahora puede ser null
         type: eventType,
         art_types: selectedArtTypes,
         ticket_url: ticketUrl || null,
@@ -215,13 +225,12 @@ const CreateEvent = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="description">Descripción *</Label>
+                  <Label htmlFor="description">Descripción</Label>
                   <Textarea
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={4}
-                    required
                   />
                 </div>
                 
@@ -256,7 +265,7 @@ const CreateEvent = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="eventType">Descripción del tipo de evento *</Label>
+                  <Label htmlFor="eventType">Tipo de evento *</Label>
                   <Input
                     id="eventType"
                     value={eventType}
@@ -267,7 +276,7 @@ const CreateEvent = () => {
                 </div>
                 
                 <div className="space-y-4">
-                  <Label>Ubicación *</Label>
+                  <Label>Ubicación</Label>
                   
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
@@ -276,7 +285,6 @@ const CreateEvent = () => {
                         id="address"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
-                        required
                       />
                     </div>
                     
@@ -286,7 +294,6 @@ const CreateEvent = () => {
                         id="city"
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
-                        required
                       />
                     </div>
                   </div>
@@ -298,7 +305,6 @@ const CreateEvent = () => {
                         id="crossStreets"
                         value={crossStreets}
                         onChange={(e) => setCrossStreets(e.target.value)}
-                        required
                       />
                     </div>
                     
@@ -308,14 +314,13 @@ const CreateEvent = () => {
                         id="locality"
                         value={locality}
                         onChange={(e) => setLocality(e.target.value)}
-                        required
                       />
                     </div>
                   </div>
                   
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
-                      <Label htmlFor="latitude">Latitud</Label>
+                      <Label htmlFor="latitude">Latitud *</Label>
                       <Input
                         id="latitude"
                         value={latitude}
@@ -325,7 +330,7 @@ const CreateEvent = () => {
                     </div>
                     
                     <div>
-                      <Label htmlFor="longitude">Longitud</Label>
+                      <Label htmlFor="longitude">Longitud *</Label>
                       <Input
                         id="longitude"
                         value={longitude}

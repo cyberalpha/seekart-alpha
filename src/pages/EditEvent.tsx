@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,12 +16,12 @@ import { artTypes } from "./ArtistProfile";
 type EventData = {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
   date: string;
-  address: string;
-  city: string;
-  cross_streets: string;
-  locality: string;
+  address: string | null;
+  city: string | null;
+  cross_streets: string | null;
+  locality: string | null;
   type: string;
   art_types?: string[];
   ticket_url: string | null;
@@ -89,12 +90,12 @@ const EditEvent = () => {
         const formattedDate = eventDate.toISOString().slice(0, 16);
         
         setTitle(eventData.title);
-        setDescription(eventData.description);
+        setDescription(eventData.description || "");
         setDate(formattedDate);
-        setAddress(eventData.address);
-        setCity(eventData.city);
-        setCrossStreets(eventData.cross_streets);
-        setLocality(eventData.locality);
+        setAddress(eventData.address || "");
+        setCity(eventData.city || "");
+        setCrossStreets(eventData.cross_streets || "");
+        setLocality(eventData.locality || "");
         setEventType(eventData.type);
         setSelectedArtTypes(eventData.art_types || []);
         setTicketUrl(eventData.ticket_url || "");
@@ -228,6 +229,15 @@ const EditEvent = () => {
         return;
       }
       
+      if (!latitude || !longitude) {
+        toast({
+          variant: "destructive",
+          title: "Ubicación requerida",
+          description: "Debes proporcionar la latitud y longitud del evento.",
+        });
+        return;
+      }
+      
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
@@ -237,12 +247,12 @@ const EditEvent = () => {
       
       const eventData = {
         title,
-        description,
+        description: description || null,
         date,
-        address,
-        city,
-        cross_streets: crossStreets,
-        locality,
+        address: address || null,
+        city: city || null,
+        cross_streets: crossStreets || null,
+        locality: locality || null,
         type: eventType,
         art_types: selectedArtTypes,
         ticket_url: ticketUrl || null,
@@ -314,13 +324,12 @@ const EditEvent = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="description">Descripción *</Label>
+                  <Label htmlFor="description">Descripción</Label>
                   <Textarea
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={4}
-                    required
                   />
                 </div>
                 
@@ -355,7 +364,7 @@ const EditEvent = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="eventType">Descripción del tipo de evento *</Label>
+                  <Label htmlFor="eventType">Tipo de evento *</Label>
                   <Input
                     id="eventType"
                     value={eventType}
@@ -366,7 +375,7 @@ const EditEvent = () => {
                 </div>
                 
                 <div className="space-y-4">
-                  <Label>Ubicación *</Label>
+                  <Label>Ubicación</Label>
                   
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
@@ -375,7 +384,6 @@ const EditEvent = () => {
                         id="address"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
-                        required
                       />
                     </div>
                     
@@ -385,7 +393,6 @@ const EditEvent = () => {
                         id="city"
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
-                        required
                       />
                     </div>
                   </div>
@@ -397,7 +404,6 @@ const EditEvent = () => {
                         id="crossStreets"
                         value={crossStreets}
                         onChange={(e) => setCrossStreets(e.target.value)}
-                        required
                       />
                     </div>
                     
@@ -407,14 +413,13 @@ const EditEvent = () => {
                         id="locality"
                         value={locality}
                         onChange={(e) => setLocality(e.target.value)}
-                        required
                       />
                     </div>
                   </div>
                   
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
-                      <Label htmlFor="latitude">Latitud</Label>
+                      <Label htmlFor="latitude">Latitud *</Label>
                       <Input
                         id="latitude"
                         value={latitude}
@@ -424,7 +429,7 @@ const EditEvent = () => {
                     </div>
                     
                     <div>
-                      <Label htmlFor="longitude">Longitud</Label>
+                      <Label htmlFor="longitude">Longitud *</Label>
                       <Input
                         id="longitude"
                         value={longitude}

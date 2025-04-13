@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,9 +36,27 @@ const FanProfile = () => {
           .eq("id", session.user.id)
           .single();
         
-        if (fanError) throw fanError;
-        
-        if (fanData) {
+        if (fanError) {
+          console.error("Fan error:", fanError);
+          if (fanError.code === 'PGRST116') {
+            const { error: insertError } = await supabase
+              .from("fans")
+              .insert({
+                id: session.user.id,
+                name: session.user.user_metadata?.name || "Fan",
+                last_name: session.user.user_metadata?.last_name || "",
+                profile_image: null
+              });
+            
+            if (insertError) throw insertError;
+            
+            setName(session.user.user_metadata?.name || "Fan");
+            setLastName(session.user.user_metadata?.last_name || "");
+            setProfileImageUrl(null);
+          } else {
+            throw fanError;
+          }
+        } else if (fanData) {
           setName(fanData.name || "");
           setLastName(fanData.last_name || "");
           setProfileImageUrl(fanData.profile_image || null);
@@ -121,7 +138,16 @@ const FanProfile = () => {
         return;
       }
       
-      // Upload image to storage
+      const { data: buckets } = await supabase.storage.listBuckets();
+      const profilesBucketExists = buckets?.some(bucket => bucket.name === "profiles");
+      
+      if (!profilesBucketExists) {
+        await supabase.storage.createBucket("profiles", {
+          public: true,
+          fileSizeLimit: 5242880
+        });
+      }
+      
       const { error: uploadError } = await supabase.storage
         .from("profiles")
         .upload(filePath, file, {
@@ -131,14 +157,12 @@ const FanProfile = () => {
       
       if (uploadError) throw uploadError;
       
-      // Get public URL
       const { data: urlData } = supabase.storage
         .from("profiles")
         .getPublicUrl(filePath);
       
       const publicUrl = urlData.publicUrl;
       
-      // Update profile with new image URL
       const { error: updateError } = await supabase
         .from("fans")
         .update({ profile_image: publicUrl })
