@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowRight, Check, CreditCard, Paypal } from "lucide-react";
+import { ArrowRight, Check, CreditCard } from "lucide-react";
+import { FaCcPaypal } from "react-icons/fa";
 
 const Donations = () => {
   const [amount, setAmount] = useState("25");
@@ -230,7 +230,7 @@ const Donations = () => {
                       <div className="flex items-center space-x-3 rounded-md border border-gray-200 p-3">
                         <RadioGroupItem value="paypal" id="paypal" />
                         <Label htmlFor="paypal" className="flex flex-1 items-center space-x-3">
-                          <Paypal className="h-5 w-5 text-gray-600" />
+                          <FaCcPaypal className="h-5 w-5 text-gray-600" />
                           <span>PayPal</span>
                         </Label>
                       </div>
