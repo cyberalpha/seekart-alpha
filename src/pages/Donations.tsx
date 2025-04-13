@@ -8,7 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowRight, Check, CreditCard } from "lucide-react";
 import { FaCcPaypal } from "react-icons/fa";
-
 const Donations = () => {
   const [amount, setAmount] = useState("25");
   const [customAmount, setCustomAmount] = useState("");
@@ -20,25 +19,23 @@ const Donations = () => {
   const [isMonthly, setIsMonthly] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const handleDonation = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     setIsSubmitting(true);
-    
+
     // Simulate payment processing
     setTimeout(() => {
       setIsSubmitting(false);
       setIsComplete(true);
-      
       toast({
         title: "¡Gracias por tu donación!",
-        description: "Tu apoyo es fundamental para la comunidad artística.",
+        description: "Tu apoyo es fundamental para la comunidad artística."
       });
     }, 1500);
   };
-
   const resetForm = () => {
     setIsComplete(false);
     setAmount("25");
@@ -48,10 +45,8 @@ const Donations = () => {
     setCardExpiry("");
     setCardCvc("");
   };
-
   if (isComplete) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+    return <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
         <Navbar />
         
         <div className="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6 lg:px-8">
@@ -67,20 +62,14 @@ const Donations = () => {
           </p>
           
           <div className="mt-8">
-            <Button 
-              onClick={resetForm}
-              className="bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]"
-            >
+            <Button onClick={resetForm} className="bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]">
               Hacer otra donación
             </Button>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+  return <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
       <Navbar />
       
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -94,63 +83,15 @@ const Donations = () => {
               Tu donación ayuda a mantener viva la comunidad artística y apoya a artistas locales en su desarrollo creativo.
             </p>
             
-            <div className="mt-8 space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#9b87f5] text-white">
-                  <span className="text-lg font-medium">1</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-medium">Apoya la creatividad local</h3>
-                  <p className="mt-1 text-gray-600">
-                    Tu donación se destina directamente a apoyar a artistas emergentes y establecidos en tu comunidad.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#9b87f5] text-white">
-                  <span className="text-lg font-medium">2</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-medium">Facilita eventos culturales</h3>
-                  <p className="mt-1 text-gray-600">
-                    Ayudas a financiar talleres, exposiciones y eventos que enriquecen la vida cultural de la ciudad.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#9b87f5] text-white">
-                  <span className="text-lg font-medium">3</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-medium">Promueve la educación artística</h3>
-                  <p className="mt-1 text-gray-600">
-                    Contribuyes a programas educativos que acercan el arte a personas de todas las edades y condiciones.
-                  </p>
-                </div>
-              </div>
-            </div>
             
-            <div className="mt-10 rounded-lg bg-gray-50 p-6">
-              <div className="flex items-start space-x-4">
-                <div className="rounded-full bg-[#9b87f5]/20 p-2 text-[#9b87f5]">
-                  <Check size={20} />
-                </div>
-                <div>
-                  <h3 className="text-lg font-medium">100% transparente</h3>
-                  <p className="mt-1 text-gray-600">
-                    El 85% de tu donación va directamente a los artistas, el 15% se utiliza para mantener la plataforma y organizar eventos comunitarios.
-                  </p>
-                </div>
-              </div>
-            </div>
+            
+            
           </div>
           
           <div>
             <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
               <div className="border-b border-gray-200 p-6">
-                <Tabs value={isMonthly ? "monthly" : "once"} onValueChange={(v) => setIsMonthly(v === "monthly")} className="w-full">
+                <Tabs value={isMonthly ? "monthly" : "once"} onValueChange={v => setIsMonthly(v === "monthly")} className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="once">Donación única</TabsTrigger>
                     <TabsTrigger value="monthly">Donación mensual</TabsTrigger>
@@ -165,27 +106,14 @@ const Donations = () => {
                       Elige un monto {isMonthly && "mensual"}
                     </Label>
                     
-                    <RadioGroup 
-                      value={amount} 
-                      onValueChange={setAmount}
-                      className="grid grid-cols-3 gap-3"
-                    >
-                      {["25", "50", "100", "250", "500", "1000"].map((value) => (
-                        <div key={value}>
-                          <RadioGroupItem 
-                            value={value} 
-                            id={`amount-${value}`} 
-                            className="peer sr-only" 
-                          />
-                          <Label 
-                            htmlFor={`amount-${value}`}
-                            className="flex cursor-pointer flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-[#9b87f5]"
-                          >
+                    <RadioGroup value={amount} onValueChange={setAmount} className="grid grid-cols-3 gap-3">
+                      {["25", "50", "100", "250", "500", "1000"].map(value => <div key={value}>
+                          <RadioGroupItem value={value} id={`amount-${value}`} className="peer sr-only" />
+                          <Label htmlFor={`amount-${value}`} className="flex cursor-pointer flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-[#9b87f5]">
                             <span className="text-xl font-bold">${value}</span>
                             <span className="text-xs text-muted-foreground">MXN</span>
                           </Label>
-                        </div>
-                      ))}
+                        </div>)}
                     </RadioGroup>
                     
                     <div className="mt-4">
@@ -194,17 +122,10 @@ const Donations = () => {
                       </Label>
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                        <Input
-                          id="customAmount"
-                          type="number"
-                          value={customAmount}
-                          onChange={(e) => {
-                            setCustomAmount(e.target.value);
-                            if (e.target.value) setAmount("");
-                          }}
-                          placeholder="Otro monto"
-                          className="pl-8"
-                        />
+                        <Input id="customAmount" type="number" value={customAmount} onChange={e => {
+                        setCustomAmount(e.target.value);
+                        if (e.target.value) setAmount("");
+                      }} placeholder="Otro monto" className="pl-8" />
                       </div>
                     </div>
                   </div>
@@ -214,11 +135,7 @@ const Donations = () => {
                       Método de pago
                     </Label>
                     
-                    <RadioGroup 
-                      value={paymentMethod} 
-                      onValueChange={setPaymentMethod}
-                      className="space-y-3"
-                    >
+                    <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-3">
                       <div className="flex items-center space-x-3 rounded-md border border-gray-200 p-3">
                         <RadioGroupItem value="card" id="card" />
                         <Label htmlFor="card" className="flex flex-1 items-center space-x-3">
@@ -237,77 +154,41 @@ const Donations = () => {
                     </RadioGroup>
                   </div>
                   
-                  {paymentMethod === "card" && (
-                    <div className="space-y-4">
+                  {paymentMethod === "card" && <div className="space-y-4">
                       <div>
                         <Label htmlFor="cardNumber">Número de tarjeta</Label>
-                        <Input
-                          id="cardNumber"
-                          value={cardNumber}
-                          onChange={(e) => setCardNumber(e.target.value)}
-                          placeholder="1234 5678 9012 3456"
-                          required
-                        />
+                        <Input id="cardNumber" value={cardNumber} onChange={e => setCardNumber(e.target.value)} placeholder="1234 5678 9012 3456" required />
                       </div>
                       
                       <div>
                         <Label htmlFor="cardName">Nombre en la tarjeta</Label>
-                        <Input
-                          id="cardName"
-                          value={cardName}
-                          onChange={(e) => setCardName(e.target.value)}
-                          placeholder="John Doe"
-                          required
-                        />
+                        <Input id="cardName" value={cardName} onChange={e => setCardName(e.target.value)} placeholder="John Doe" required />
                       </div>
                       
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="cardExpiry">Fecha de expiración</Label>
-                          <Input
-                            id="cardExpiry"
-                            value={cardExpiry}
-                            onChange={(e) => setCardExpiry(e.target.value)}
-                            placeholder="MM/AA"
-                            required
-                          />
+                          <Input id="cardExpiry" value={cardExpiry} onChange={e => setCardExpiry(e.target.value)} placeholder="MM/AA" required />
                         </div>
                         
                         <div>
                           <Label htmlFor="cardCvc">CVC</Label>
-                          <Input
-                            id="cardCvc"
-                            value={cardCvc}
-                            onChange={(e) => setCardCvc(e.target.value)}
-                            placeholder="123"
-                            required
-                          />
+                          <Input id="cardCvc" value={cardCvc} onChange={e => setCardCvc(e.target.value)} placeholder="123" required />
                         </div>
                       </div>
-                    </div>
-                  )}
+                    </div>}
                   
-                  {isMonthly && (
-                    <div className="rounded-md bg-amber-50 p-4 text-sm text-amber-800">
+                  {isMonthly && <div className="rounded-md bg-amber-50 p-4 text-sm text-amber-800">
                       <p>
                         Al continuar, aceptas realizar donaciones mensuales recurrentes hasta que canceles la suscripción.
                       </p>
-                    </div>
-                  )}
+                    </div>}
                   
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting || (!amount && !customAmount)}
-                    className="w-full bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]"
-                  >
-                    {isSubmitting ? (
-                      "Procesando..."
-                    ) : (
-                      <span className="flex items-center">
+                  <Button type="submit" disabled={isSubmitting || !amount && !customAmount} className="w-full bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]">
+                    {isSubmitting ? "Procesando..." : <span className="flex items-center">
                         Donar ${customAmount || amount} {isMonthly && "al mes"}
                         <ArrowRight className="ml-2 h-4 w-4" />
-                      </span>
-                    )}
+                      </span>}
                   </Button>
                   
                   <p className="text-center text-xs text-gray-500">
@@ -326,17 +207,13 @@ const Donations = () => {
           </p>
           
           <div className="mt-10 grid grid-cols-2 gap-8 sm:grid-cols-3 md:grid-cols-6">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="flex flex-col items-center">
+            {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="flex flex-col items-center">
                 <div className="h-16 w-16 rounded-full bg-gray-200"></div>
                 <p className="mt-3 font-medium">Donante {i}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Donations;
