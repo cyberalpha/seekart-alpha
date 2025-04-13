@@ -12,15 +12,25 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { Session } from "@supabase/supabase-js";
+import { useToast } from "@/components/ui/use-toast";
+import { UserRound, Map, Heart, Home } from "lucide-react";
 
 const Navbar = () => {
   const [session, setSession] = useState<Session | null>(null);
+  const [userType, setUserType] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     // Get current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      
+      // Obtener el tipo de usuario si hay sesión
+      if (session?.user) {
+        const userMetadata = session.user.user_metadata;
+        setUserType(userMetadata?.user_type || null);
+      }
     });
 
     // Listen for auth changes
@@ -28,14 +38,35 @@ const Navbar = () => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      
+      // Actualizar tipo de usuario cuando cambia la sesión
+      if (session?.user) {
+        const userMetadata = session.user.user_metadata;
+        setUserType(userMetadata?.user_type || null);
+      } else {
+        setUserType(null);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/");
+    try {
+      await supabase.auth.signOut();
+      navigate("/");
+      toast({
+        title: "Sesión cerrada",
+        description: "Has cerrado sesión correctamente.",
+      });
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudo cerrar la sesión. Inténtalo de nuevo.",
+      });
+    }
   };
 
   return (
@@ -47,7 +78,7 @@ const Navbar = () => {
             alt="SeekArt Logo"
             className="h-10 w-auto"
           />
-          <span className="text-xl font-bold">SeekArt</span>
+          <span className="text-xl font-bold text-[#1A1F2C]">SeekArt</span>
         </Link>
 
         <NavigationMenu>
@@ -56,9 +87,22 @@ const Navbar = () => {
               <NavigationMenuLink asChild>
                 <Link
                   to="/"
-                  className="rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                  className="flex items-center gap-1 rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
                 >
-                  Inicio
+                  <Home size={16} />
+                  <span>Inicio</span>
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link
+                  to="/map"
+                  className="flex items-center gap-1 rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                >
+                  <Map size={16} />
+                  <span>Mapa de Eventos</span>
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
@@ -92,6 +136,18 @@ const Navbar = () => {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link
+                  to="/donations"
+                  className="flex items-center gap-1 rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                >
+                  <Heart size={16} />
+                  <span>Donaciones</span>
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
 
@@ -105,12 +161,13 @@ const Navbar = () => {
               >
                 Cerrar sesión
               </Button>
-              <Link to="/profile">
+              <Link to={userType === "artist" ? "/artist-profile" : "/fan-profile"}>
                 <Button
                   variant="default"
-                  className="bg-gradient-to-r from-green-500 to-teal-500 text-sm font-medium hover:from-green-600 hover:to-teal-600"
+                  className="flex items-center gap-1 bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] text-sm font-medium hover:from-[#8a76e4] hover:to-[#5d4894]"
                 >
-                  Mi perfil
+                  <UserRound size={16} />
+                  <span>Mi perfil</span>
                 </Button>
               </Link>
             </div>
@@ -118,7 +175,7 @@ const Navbar = () => {
             <Link to="/auth">
               <Button
                 variant="default"
-                className="bg-gradient-to-r from-green-500 to-teal-500 text-sm font-medium hover:from-green-600 hover:to-teal-600"
+                className="bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] text-sm font-medium hover:from-[#8a76e4] hover:to-[#5d4894]"
               >
                 Iniciar sesión
               </Button>
