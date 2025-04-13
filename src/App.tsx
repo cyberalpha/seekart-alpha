@@ -10,30 +10,40 @@ import Auth from "./pages/Auth";
 import EventMap from "./pages/EventMap";
 import Donations from "./pages/Donations";
 import NotFound from "./pages/NotFound";
+import FanProfile from "./pages/FanProfile";
+import ArtistProfile from "./pages/ArtistProfile";
+import CreateEvent from "./pages/CreateEvent";
+import EditEvent from "./pages/EditEvent";
+import Artists from "./pages/Artists";
+import Events from "./pages/Events";
 
-// Crear el cliente de consulta fuera del componente para evitar re-creaciones
+// Create query client outside the component to avoid recreations
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/map" element={<EventMap />} />
-              <Route path="/donations" element={<Donations />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/map" element={<EventMap />} />
+            <Route path="/donations" element={<Donations />} />
+            <Route path="/fan-profile" element={<FanProfile />} />
+            <Route path="/artist-profile" element={<ArtistProfile />} />
+            <Route path="/create-event" element={<CreateEvent />} />
+            <Route path="/edit-event/:eventId" element={<EditEvent />} />
+            <Route path="/artists" element={<Artists />} />
+            <Route path="/events" element={<Events />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 };
 

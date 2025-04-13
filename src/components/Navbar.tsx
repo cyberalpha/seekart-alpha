@@ -11,13 +11,22 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Session } from "@supabase/supabase-js";
 import { useToast } from "@/components/ui/use-toast";
-import { UserRound, Map, Heart, Home } from "lucide-react";
+import { UserRound, Map, Heart, Home, Users, Calendar } from "lucide-react";
 
 const Navbar = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [userType, setUserType] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -26,10 +35,13 @@ const Navbar = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       
-      // Obtener el tipo de usuario si hay sesión
+      // Get user type and profile image if there's a session
       if (session?.user) {
         const userMetadata = session.user.user_metadata;
         setUserType(userMetadata?.user_type || null);
+        
+        // Fetch profile image based on user type
+        fetchProfileImage(session.user.id, userMetadata?.user_type);
       }
     });
 
@@ -39,17 +51,43 @@ const Navbar = () => {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       
-      // Actualizar tipo de usuario cuando cambia la sesión
+      // Update user type and profile image when session changes
       if (session?.user) {
         const userMetadata = session.user.user_metadata;
         setUserType(userMetadata?.user_type || null);
+        
+        // Fetch profile image based on user type
+        fetchProfileImage(session.user.id, userMetadata?.user_type);
       } else {
         setUserType(null);
+        setProfileImage(null);
       }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const fetchProfileImage = async (userId: string, userType: string | undefined) => {
+    try {
+      if (!userId || !userType) return;
+      
+      const tableName = userType === "artist" ? "artists" : "fans";
+      
+      const { data, error } = await supabase
+        .from(tableName)
+        .select("profile_image")
+        .eq("id", userId)
+        .single();
+      
+      if (error) throw error;
+      
+      if (data && data.profile_image) {
+        setProfileImage(data.profile_image);
+      }
+    } catch (error) {
+      console.error("Error fetching profile image:", error);
+    }
+  };
 
   const handleSignOut = async () => {
     try {
@@ -117,9 +155,10 @@ const Navbar = () => {
                     <NavigationMenuLink asChild>
                       <Link
                         to="/artists"
-                        className="block rounded p-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                        className="flex items-center gap-2 rounded p-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
                       >
-                        Artistas
+                        <Users size={16} />
+                        <span>Artistas</span>
                       </Link>
                     </NavigationMenuLink>
                   </li>
@@ -127,9 +166,10 @@ const Navbar = () => {
                     <NavigationMenuLink asChild>
                       <Link
                         to="/events"
-                        className="block rounded p-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                        className="flex items-center gap-2 rounded p-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
                       >
-                        Eventos
+                        <Calendar size={16} />
+                        <span>Eventos</span>
                       </Link>
                     </NavigationMenuLink>
                   </li>
@@ -153,24 +193,37 @@ const Navbar = () => {
 
         <div className="flex items-center space-x-4">
           {session ? (
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="outline"
-                onClick={handleSignOut}
-                className="text-sm font-medium"
-              >
-                Cerrar sesión
-              </Button>
-              <Link to={userType === "artist" ? "/artist-profile" : "/fan-profile"}>
-                <Button
-                  variant="default"
-                  className="flex items-center gap-1 bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] text-sm font-medium hover:from-[#8a76e4] hover:to-[#5d4894]"
-                >
-                  <UserRound size={16} />
-                  <span>Mi perfil</span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Avatar className="h-10 w-10">
+                    {profileImage ? (
+                      <AvatarImage src={profileImage} alt="Profile" />
+                    ) : (
+                      <AvatarFallback className="bg-gradient-to-r from-[#9b87f5] to-[#6E59A5]">
+                        <UserRound className="h-5 w-5 text-white" />
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
                 </Button>
-              </Link>
-            </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link to={userType === "artist" ? "/artist-profile" : "/fan-profile"}>
+                    Mi perfil
+                  </Link>
+                </DropdownMenuItem>
+                {userType === "artist" && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/create-event">Crear evento</Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>
+                  Cerrar sesión
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Link to="/auth">
               <Button

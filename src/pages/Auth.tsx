@@ -1,17 +1,21 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserRound, Upload } from "lucide-react";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [userType, setUserType] = useState("fan");
   const [name, setName] = useState("");
@@ -19,8 +23,63 @@ const Auth = () => {
   const [facebookUrl, setFacebookUrl] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
   const [description, setDescription] = useState("");
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Check if user is already logged in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        const userType = session.user.user_metadata?.user_type;
+        navigate(userType === "artist" ? "/artist-profile" : "/fan-profile");
+      }
+    });
+  }, [navigate]);
+
+  const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) {
+      return;
+    }
+    
+    const file = event.target.files[0];
+    setProfileImage(file);
+    
+    // Create a preview URL
+    const objectUrl = URL.createObjectURL(file);
+    setProfileImageUrl(objectUrl);
+  };
+
+  const uploadProfileImage = async (userId: string, userType: string): Promise<string | null> => {
+    if (!profileImage) return null;
+    
+    try {
+      setUploading(true);
+      
+      const fileExt = profileImage.name.split(".").pop();
+      const filePath = `${userType}-profiles/${userId}/${Date.now()}.${fileExt}`;
+      
+      // Upload to storage
+      const { error: uploadError } = await supabase.storage
+        .from("profiles")
+        .upload(filePath, profileImage);
+      
+      if (uploadError) throw uploadError;
+      
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from("profiles")
+        .getPublicUrl(filePath);
+      
+      return urlData.publicUrl;
+    } catch (error) {
+      console.error("Error uploading profile image:", error);
+      return null;
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +113,11 @@ const Auth = () => {
         if (authError) throw authError;
         
         if (authData?.user) {
+          // Upload profile image if provided
+          const imageUrl = profileImage 
+            ? await uploadProfileImage(authData.user.id, userType)
+            : null;
+          
           // Crear perfil según el tipo de usuario
           if (userType === "fan") {
             const { error: fanError } = await supabase
@@ -62,6 +126,7 @@ const Auth = () => {
                 id: authData.user.id,
                 name,
                 last_name: lastName,
+                profile_image: imageUrl,
               });
             
             if (fanError) throw fanError;
@@ -75,6 +140,7 @@ const Auth = () => {
                 facebook_url: facebookUrl,
                 instagram_url: instagramUrl,
                 description,
+                profile_image: imageUrl,
               });
             
             if (artistError) throw artistError;
@@ -94,7 +160,14 @@ const Auth = () => {
 
         if (error) throw error;
         
-        navigate("/");
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+          const userType = session.user.user_metadata?.user_type;
+          navigate(userType === "artist" ? "/artist-profile" : "/fan-profile");
+        } else {
+          navigate("/");
+        }
       }
     } catch (error: any) {
       toast({
@@ -150,6 +223,38 @@ const Auth = () => {
                 </div>
 
                 <div>
+                  <Label>Foto de perfil (opcional)</Label>
+                  <div className="mt-2 flex flex-col items-center space-y-4">
+                    <Avatar className="h-24 w-24">
+                      {profileImageUrl ? (
+                        <AvatarImage src={profileImageUrl} alt="Vista previa" />
+                      ) : (
+                        <AvatarFallback className="bg-[#9b87f5] text-white">
+                          <UserRound size={32} />
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    
+                    <div>
+                      <Input
+                        id="profileImage"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProfileImageChange}
+                        className="hidden"
+                      />
+                      <Label
+                        htmlFor="profileImage"
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#9b87f5] px-4 py-2 text-sm font-medium text-white hover:bg-[#8a76e4]"
+                      >
+                        <Upload size={16} />
+                        <span>{profileImageUrl ? "Cambiar foto" : "Subir foto"}</span>
+                      </Label>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
                   <Label htmlFor="name">Nombre {userType === "artist" && "artístico o denominación"}</Label>
                   <Input
                     id="name"
@@ -178,13 +283,13 @@ const Auth = () => {
                   <>
                     <div>
                       <Label htmlFor="description">Descripción</Label>
-                      <Input
+                      <Textarea
                         id="description"
-                        type="text"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         required
                         placeholder="Breve descripción de tu arte"
+                        rows={3}
                       />
                     </div>
 
@@ -242,9 +347,9 @@ const Auth = () => {
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]"
-              disabled={loading}
+              disabled={loading || uploading}
             >
-              {loading
+              {loading || uploading
                 ? "Procesando..."
                 : isSignUp
                 ? "Registrarse"
