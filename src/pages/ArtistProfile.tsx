@@ -14,7 +14,6 @@ import { UserRound, Upload, PlusCircle, Edit, Trash2, Facebook, Instagram, Link 
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 
-// Definir los tipos de arte disponibles con sus colores basados en la paleta del logo
 export const artTypes = [
   { id: "musica", name: "Música", color: "bg-[#2ecc71]" }, // Verde brillante
   { id: "teatro", name: "Teatro", color: "bg-[#f1c40f]" }, // Amarillo
@@ -42,7 +41,6 @@ type ArtistType = {
   selected: boolean;
 };
 
-// Extendemos el tipo de artista para incluir los nuevos campos
 type ArtistData = {
   created_at: string;
   description: string;
@@ -67,6 +65,7 @@ const ArtistProfile = () => {
   const [instagramUrl, setInstagramUrl] = useState("");
   const [linktreeUrl, setLinktreeUrl] = useState("");
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
   const [editing, setEditing] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
   const [artistTypes, setArtistTypes] = useState<ArtistType[]>([]);
@@ -101,7 +100,6 @@ const ArtistProfile = () => {
           setLinktreeUrl(data.linktree_url || "");
           setProfileImageUrl(data.profile_image || null);
           
-          // Inicializar los tipos de artista
           const types = data.art_types || [];
           setArtistTypes(
             artTypes.map(type => ({
@@ -111,7 +109,6 @@ const ArtistProfile = () => {
           );
         }
         
-        // Fetch artist events
         const { data: eventsData, error: eventsError } = await supabase
           .from("events")
           .select("*")
@@ -147,7 +144,11 @@ const ArtistProfile = () => {
         return;
       }
       
-      // Obtener los tipos de arte seleccionados
+      let imageUrl = profileImageUrl;
+      if (profileImage) {
+        imageUrl = await uploadProfileImage(session.user.id);
+      }
+      
       const selectedTypes = artistTypes
         .filter(type => type.selected)
         .map(type => type.id);
@@ -159,6 +160,7 @@ const ArtistProfile = () => {
         facebook_url: facebookUrl,
         instagram_url: instagramUrl,
         linktree_url: linktreeUrl,
+        profile_image: imageUrl,
         art_types: selectedTypes,
         updated_at: new Date().toISOString(),
       };
@@ -176,6 +178,7 @@ const ArtistProfile = () => {
       });
       
       setEditing(false);
+      setProfileImage(null);
     } catch (error) {
       console.error("Error updating profile:", error);
       toast({
@@ -188,63 +191,46 @@ const ArtistProfile = () => {
     }
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) {
+      return;
+    }
+    
+    const file = event.target.files[0];
+    setProfileImage(file);
+    
+    const objectUrl = URL.createObjectURL(file);
+    setProfileImageUrl(objectUrl);
+  };
+
+  const uploadProfileImage = async (userId: string): Promise<string | null> => {
+    if (!profileImage) return profileImageUrl;
+    
     try {
       setUploading(true);
       
-      if (!event.target.files || event.target.files.length === 0) {
-        return;
-      }
+      const fileExt = profileImage.name.split(".").pop();
+      const filePath = `artist-profiles/${userId}/${Date.now()}.${fileExt}`;
       
-      const file = event.target.files[0];
-      const fileExt = file.name.split(".").pop();
-      const filePath = `artist-profiles/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-      
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
-      
-      // Upload image to storage
       const { error: uploadError } = await supabase.storage
         .from("profiles")
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
+        .upload(filePath, profileImage);
       
       if (uploadError) throw uploadError;
       
-      // Get public URL
       const { data: urlData } = supabase.storage
         .from("profiles")
         .getPublicUrl(filePath);
       
-      const publicUrl = urlData.publicUrl;
-      
-      // Update profile with new image URL
-      const { error: updateError } = await supabase
-        .from("artists")
-        .update({ profile_image: publicUrl })
-        .eq("id", session.user.id);
-      
-      if (updateError) throw updateError;
-      
-      setProfileImageUrl(publicUrl);
-      
-      toast({
-        title: "Imagen actualizada",
-        description: "Tu foto de perfil se ha actualizado correctamente.",
-      });
+      return urlData.publicUrl;
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error("Error uploading profile image:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "No se pudo subir la imagen. Inténtalo de nuevo más tarde.",
       });
+      return profileImageUrl;
     } finally {
       setUploading(false);
     }
@@ -277,7 +263,6 @@ const ArtistProfile = () => {
       
       if (error) throw error;
       
-      // Remove from local state
       setEvents(events.filter(event => event.id !== eventId));
       
       toast({
@@ -331,17 +316,19 @@ const ArtistProfile = () => {
                         id="profileImage"
                         type="file"
                         accept="image/*"
-                        onChange={handleImageUpload}
-                        disabled={uploading}
+                        onChange={handleImageChange}
+                        disabled={uploading || !editing}
                         className="hidden"
                       />
-                      <Label
-                        htmlFor="profileImage"
-                        className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#3498db] px-4 py-2 text-sm font-medium text-white hover:bg-[#2980b9]"
-                      >
-                        <Upload size={16} />
-                        {uploading ? "Subiendo..." : "Cambiar foto"}
-                      </Label>
+                      {editing && (
+                        <Label
+                          htmlFor="profileImage"
+                          className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#3498db] px-4 py-2 text-sm font-medium text-white hover:bg-[#2980b9]"
+                        >
+                          <Upload size={16} />
+                          {uploading ? "Subiendo..." : "Cambiar foto"}
+                        </Label>
+                      )}
                     </div>
                   </div>
                   

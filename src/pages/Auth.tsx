@@ -149,8 +149,11 @@ const Auth = () => {
         
         toast({
           title: "Registro exitoso",
-          description: "Por favor, verifica tu correo electrónico para completar el registro.",
+          description: "Redirigiendo a la página de inicio...",
         });
+        
+        // Redirigir a la página de inicio después del registro
+        navigate("/");
       } else {
         // Inicio de sesión
         const { error } = await supabase.auth.signInWithPassword({

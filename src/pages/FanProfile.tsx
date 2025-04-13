@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +17,7 @@ const FanProfile = () => {
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
   const [editing, setEditing] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -39,6 +41,7 @@ const FanProfile = () => {
         if (fanError) {
           console.error("Fan error:", fanError);
           if (fanError.code === 'PGRST116') {
+            // Si no existe, crear un nuevo perfil de fan
             const { error: insertError } = await supabase
               .from("fans")
               .insert({
@@ -88,9 +91,16 @@ const FanProfile = () => {
         return;
       }
       
+      // Primero subir la imagen si se cambió
+      let imageUrl = profileImageUrl;
+      if (profileImage) {
+        imageUrl = await uploadProfileImage(session.user.id);
+      }
+      
       const updates = {
         name,
         last_name: lastName,
+        profile_image: imageUrl,
         updated_at: new Date().toISOString(),
       };
       
@@ -107,6 +117,7 @@ const FanProfile = () => {
       });
       
       setEditing(false);
+      setProfileImage(null);
     } catch (error) {
       console.error("Error updating profile:", error);
       toast({
@@ -119,70 +130,49 @@ const FanProfile = () => {
     }
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) {
+      return;
+    }
+    
+    const file = event.target.files[0];
+    setProfileImage(file);
+    
+    // Crear una vista previa
+    const objectUrl = URL.createObjectURL(file);
+    setProfileImageUrl(objectUrl);
+  };
+
+  const uploadProfileImage = async (userId: string): Promise<string | null> => {
+    if (!profileImage) return profileImageUrl;
+    
     try {
       setUploading(true);
       
-      if (!event.target.files || event.target.files.length === 0) {
-        return;
-      }
+      const fileExt = profileImage.name.split(".").pop();
+      const filePath = `fan-profiles/${userId}/${Date.now()}.${fileExt}`;
       
-      const file = event.target.files[0];
-      const fileExt = file.name.split(".").pop();
-      const filePath = `fan-profiles/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-      
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
-      
-      const { data: buckets } = await supabase.storage.listBuckets();
-      const profilesBucketExists = buckets?.some(bucket => bucket.name === "profiles");
-      
-      if (!profilesBucketExists) {
-        await supabase.storage.createBucket("profiles", {
-          public: true,
-          fileSizeLimit: 5242880
-        });
-      }
-      
+      // Subir a storage
       const { error: uploadError } = await supabase.storage
         .from("profiles")
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
+        .upload(filePath, profileImage);
       
       if (uploadError) throw uploadError;
       
+      // Obtener URL pública
       const { data: urlData } = supabase.storage
         .from("profiles")
         .getPublicUrl(filePath);
       
-      const publicUrl = urlData.publicUrl;
-      
-      const { error: updateError } = await supabase
-        .from("fans")
-        .update({ profile_image: publicUrl })
-        .eq("id", session.user.id);
-      
-      if (updateError) throw updateError;
-      
-      setProfileImageUrl(publicUrl);
-      
-      toast({
-        title: "Imagen actualizada",
-        description: "Tu foto de perfil se ha actualizado correctamente.",
-      });
+      return urlData.publicUrl;
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error("Error uploading profile image:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "No se pudo subir la imagen. Inténtalo de nuevo más tarde.",
       });
+      return profileImageUrl;
     } finally {
       setUploading(false);
     }
@@ -207,7 +197,7 @@ const FanProfile = () => {
                   {profileImageUrl ? (
                     <AvatarImage src={profileImageUrl} alt="Foto de perfil" />
                   ) : (
-                    <AvatarFallback className="bg-[#e74c3c] text-white">
+                    <AvatarFallback className="bg-[#f1c40f] text-white">
                       <UserRound size={64} />
                     </AvatarFallback>
                   )}
@@ -218,17 +208,19 @@ const FanProfile = () => {
                     id="profileImage"
                     type="file"
                     accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={uploading}
+                    onChange={handleImageChange}
+                    disabled={uploading || !editing}
                     className="hidden"
                   />
-                  <Label
-                    htmlFor="profileImage"
-                    className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#3498db] px-4 py-2 text-sm font-medium text-white hover:bg-[#2980b9]"
-                  >
-                    <Upload size={16} />
-                    {uploading ? "Subiendo..." : "Cambiar foto"}
-                  </Label>
+                  {editing && (
+                    <Label
+                      htmlFor="profileImage"
+                      className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#3498db] px-4 py-2 text-sm font-medium text-white hover:bg-[#2980b9]"
+                    >
+                      <Upload size={16} />
+                      {uploading ? "Subiendo..." : "Cambiar foto"}
+                    </Label>
+                  )}
                 </div>
               </div>
               

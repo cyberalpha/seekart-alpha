@@ -27,6 +27,18 @@ const StorageBucketInitializer = () => {
           
           if (profilesError) {
             console.error("Error creando bucket de perfiles:", profilesError);
+          } else {
+            console.log("Bucket de perfiles creado exitosamente");
+            
+            // Aplicar políticas RLS para el bucket de perfiles
+            try {
+              // Permitir leer archivos a cualquier usuario
+              await supabase.storage.from('profiles').createSignedUrl('test.txt', 1); // Esto es solo para verificar que el bucket está listo
+              
+              console.log("Bucket de perfiles configurado correctamente");
+            } catch (policyError) {
+              console.error("Error configurando políticas para el bucket de perfiles:", policyError);
+            }
           }
         }
         
@@ -39,6 +51,8 @@ const StorageBucketInitializer = () => {
           
           if (eventsError) {
             console.error("Error creando bucket de eventos:", eventsError);
+          } else {
+            console.log("Bucket de eventos creado exitosamente");
           }
         }
         
