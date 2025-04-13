@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -49,6 +50,14 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* SeekArt color palette */
+    --seekart-green: 145 66% 49%;
+    --seekart-red: 6 78% 57%;
+    --seekart-blue: 204 70% 53%;
+    --seekart-yellow: 48 89% 50%;
+    --seekart-orange: 28 80% 52%;
+    --seekart-purple: 282 44% 53%;
   }
 
   .dark {

@@ -183,7 +183,7 @@ const FanProfile = () => {
                   {profileImageUrl ? (
                     <AvatarImage src={profileImageUrl} alt="Foto de perfil" />
                   ) : (
-                    <AvatarFallback className="bg-[#9b87f5] text-white">
+                    <AvatarFallback className="bg-[#e74c3c] text-white">
                       <UserRound size={64} />
                     </AvatarFallback>
                   )}
@@ -200,7 +200,7 @@ const FanProfile = () => {
                   />
                   <Label
                     htmlFor="profileImage"
-                    className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#9b87f5] px-4 py-2 text-sm font-medium text-white hover:bg-[#8a76e4]"
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#3498db] px-4 py-2 text-sm font-medium text-white hover:bg-[#2980b9]"
                   >
                     <Upload size={16} />
                     {uploading ? "Subiendo..." : "Cambiar foto"}
@@ -243,7 +243,7 @@ const FanProfile = () => {
                       <Button
                         onClick={handleUpdateProfile}
                         disabled={loading}
-                        className="bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]"
+                        className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]"
                       >
                         {loading ? "Guardando..." : "Guardar cambios"}
                       </Button>
@@ -266,7 +266,7 @@ const FanProfile = () => {
                     <div className="pt-4">
                       <Button
                         onClick={() => setEditing(true)}
-                        className="bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]"
+                        className="bg-gradient-to-r from-[#2ecc71] to-[#3498db] hover:from-[#27ae60] hover:to-[#2980b9]"
                       >
                         Editar perfil
                       </Button>

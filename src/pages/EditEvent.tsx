@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +11,26 @@ import { useToast } from "@/components/ui/use-toast";
 import { Upload, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { artTypes } from "./ArtistProfile";
+
+type EventData = {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  address: string;
+  city: string;
+  cross_streets: string;
+  locality: string;
+  type: string;
+  art_types?: string[];
+  ticket_url: string | null;
+  video_url: string | null;
+  image_url: string;
+  latitude: number;
+  longitude: number;
+  artist_id: string;
+  created_at: string;
+};
 
 const EditEvent = () => {
   const { eventId } = useParams();
@@ -44,13 +63,15 @@ const EditEvent = () => {
           return;
         }
         
-        const { data: eventData, error } = await supabase
+        const { data, error } = await supabase
           .from("events")
           .select("*")
           .eq("id", eventId)
           .single();
         
         if (error) throw error;
+        
+        const eventData = data as unknown as EventData;
         
         // Only let the artist edit their own events
         if (eventData.artist_id !== session.user.id) {
@@ -475,7 +496,7 @@ const EditEvent = () => {
                       />
                       <Label
                         htmlFor="eventImage"
-                        className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#9b87f5] px-4 py-2 text-sm font-medium text-white hover:bg-[#8a76e4]"
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#3498db] px-4 py-2 text-sm font-medium text-white hover:bg-[#2980b9]"
                       >
                         <Upload size={16} />
                         {uploading ? "Subiendo..." : "Cambiar imagen"}
@@ -498,7 +519,7 @@ const EditEvent = () => {
                 <Button
                   type="submit"
                   disabled={loading || uploading}
-                  className="bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]"
+                  className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]"
                 >
                   {loading ? "Guardando..." : "Guardar cambios"}
                 </Button>

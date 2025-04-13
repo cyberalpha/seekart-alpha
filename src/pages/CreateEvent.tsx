@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -45,7 +44,6 @@ const CreateEvent = () => {
       const fileExt = file.name.split(".").pop();
       const filePath = `event-images/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
       
-      // Upload image to storage
       const { error: uploadError } = await supabase.storage
         .from("events")
         .upload(filePath, file, {
@@ -55,7 +53,6 @@ const CreateEvent = () => {
       
       if (uploadError) throw uploadError;
       
-      // Get public URL
       const { data: urlData } = supabase.storage
         .from("events")
         .getPublicUrl(filePath);
@@ -400,7 +397,7 @@ const CreateEvent = () => {
                       />
                       <Label
                         htmlFor="eventImage"
-                        className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#9b87f5] px-4 py-2 text-sm font-medium text-white hover:bg-[#8a76e4]"
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#3498db] px-4 py-2 text-sm font-medium text-white hover:bg-[#2980b9]"
                       >
                         <Upload size={16} />
                         {uploading ? "Subiendo..." : imageUrl ? "Cambiar imagen" : "Subir imagen"}
@@ -423,7 +420,7 @@ const CreateEvent = () => {
                 <Button
                   type="submit"
                   disabled={loading || uploading}
-                  className="bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]"
+                  className="bg-gradient-to-r from-[#2ecc71] to-[#3498db] hover:from-[#27ae60] hover:to-[#2980b9]"
                 >
                   {loading ? "Creando..." : "Crear evento"}
                 </Button>

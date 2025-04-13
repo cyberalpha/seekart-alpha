@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,13 +14,14 @@ import { UserRound, Upload, PlusCircle, Edit, Trash2, Facebook, Instagram, Link 
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 
-// Definir los tipos de arte disponibles con sus colores
+// Definir los tipos de arte disponibles con sus colores basados en la paleta del logo
 export const artTypes = [
-  { id: "musica", name: "Música", color: "bg-green-500" },
-  { id: "teatro", name: "Teatro", color: "bg-yellow-500" },
-  { id: "imagenes", name: "Imágenes y formas", color: "bg-red-500" },
-  { id: "letras", name: "Letras", color: "bg-blue-500" },
-  { id: "cine", name: "Cine", color: "bg-orange-500" },
+  { id: "musica", name: "Música", color: "bg-[#2ecc71]" }, // Verde brillante
+  { id: "teatro", name: "Teatro", color: "bg-[#f1c40f]" }, // Amarillo
+  { id: "imagenes", name: "Imágenes y formas", color: "bg-[#e74c3c]" }, // Rojo
+  { id: "letras", name: "Letras", color: "bg-[#3498db]" }, // Azul
+  { id: "cine", name: "Cine", color: "bg-[#e67e22]" }, // Naranja
+  { id: "otro", name: "Otro", color: "bg-[#9b59b6]" }, // Púrpura/Rosa
 ];
 
 type Event = {
@@ -40,6 +40,21 @@ type ArtistType = {
   name: string;
   color: string;
   selected: boolean;
+};
+
+// Extendemos el tipo de artista para incluir los nuevos campos
+type ArtistData = {
+  created_at: string;
+  description: string;
+  facebook_url: string;
+  follower_count: number;
+  id: string;
+  instagram_url: string;
+  last_name: string;
+  name: string;
+  profile_image: string;
+  linktree_url?: string;
+  art_types?: string[];
 };
 
 const ArtistProfile = () => {
@@ -77,16 +92,17 @@ const ArtistProfile = () => {
         if (artistError) throw artistError;
         
         if (artistData) {
-          setName(artistData.name || "");
-          setLastName(artistData.last_name || "");
-          setDescription(artistData.description || "");
-          setFacebookUrl(artistData.facebook_url || "");
-          setInstagramUrl(artistData.instagram_url || "");
-          setLinktreeUrl(artistData.linktree_url || "");
-          setProfileImageUrl(artistData.profile_image || null);
+          const data = artistData as unknown as ArtistData;
+          setName(data.name || "");
+          setLastName(data.last_name || "");
+          setDescription(data.description || "");
+          setFacebookUrl(data.facebook_url || "");
+          setInstagramUrl(data.instagram_url || "");
+          setLinktreeUrl(data.linktree_url || "");
+          setProfileImageUrl(data.profile_image || null);
           
           // Inicializar los tipos de artista
-          const types = artistData.art_types || [];
+          const types = data.art_types || [];
           setArtistTypes(
             artTypes.map(type => ({
               ...type,
@@ -304,7 +320,7 @@ const ArtistProfile = () => {
                       {profileImageUrl ? (
                         <AvatarImage src={profileImageUrl} alt="Foto de perfil" />
                       ) : (
-                        <AvatarFallback className="bg-[#9b87f5] text-white">
+                        <AvatarFallback className="bg-[#e74c3c] text-white">
                           <UserRound size={64} />
                         </AvatarFallback>
                       )}
@@ -321,7 +337,7 @@ const ArtistProfile = () => {
                       />
                       <Label
                         htmlFor="profileImage"
-                        className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#9b87f5] px-4 py-2 text-sm font-medium text-white hover:bg-[#8a76e4]"
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#3498db] px-4 py-2 text-sm font-medium text-white hover:bg-[#2980b9]"
                       >
                         <Upload size={16} />
                         {uploading ? "Subiendo..." : "Cambiar foto"}
@@ -421,7 +437,7 @@ const ArtistProfile = () => {
                           <Button
                             onClick={handleUpdateProfile}
                             disabled={loading}
-                            className="bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]"
+                            className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]"
                           >
                             {loading ? "Guardando..." : "Guardar cambios"}
                           </Button>
@@ -473,7 +489,7 @@ const ArtistProfile = () => {
                               href={facebookUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[#9b87f5] hover:text-[#8a76e4]"
+                              className="text-[#3498db] hover:text-[#2980b9]"
                               aria-label="Facebook"
                             >
                               <Facebook size={24} />
@@ -485,7 +501,7 @@ const ArtistProfile = () => {
                               href={instagramUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[#9b87f5] hover:text-[#8a76e4]"
+                              className="text-[#e74c3c] hover:text-[#c0392b]"
                               aria-label="Instagram"
                             >
                               <Instagram size={24} />
@@ -497,7 +513,7 @@ const ArtistProfile = () => {
                               href={linktreeUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[#9b87f5] hover:text-[#8a76e4]"
+                              className="text-[#2ecc71] hover:text-[#27ae60]"
                               aria-label="Linktree"
                             >
                               <Link size={24} />
@@ -508,7 +524,7 @@ const ArtistProfile = () => {
                         <div className="pt-4">
                           <Button
                             onClick={() => setEditing(true)}
-                            className="bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]"
+                            className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]"
                           >
                             Editar perfil
                           </Button>
@@ -527,7 +543,7 @@ const ArtistProfile = () => {
               
               <Button
                 onClick={handleCreateEvent}
-                className="flex items-center gap-2 bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]"
+                className="flex items-center gap-2 bg-gradient-to-r from-[#2ecc71] to-[#3498db] hover:from-[#27ae60] hover:to-[#2980b9]"
               >
                 <PlusCircle size={16} />
                 <span>Crear Evento</span>
@@ -542,7 +558,7 @@ const ArtistProfile = () => {
                   </p>
                   <Button
                     onClick={handleCreateEvent}
-                    className="bg-gradient-to-r from-[#9b87f5] to-[#6E59A5] hover:from-[#8a76e4] hover:to-[#5d4894]"
+                    className="bg-gradient-to-r from-[#2ecc71] to-[#3498db] hover:from-[#27ae60] hover:to-[#2980b9]"
                   >
                     Crear mi primer evento
                   </Button>
@@ -586,7 +602,7 @@ const ArtistProfile = () => {
                           variant="destructive"
                           size="sm"
                           onClick={() => handleDeleteEvent(event.id)}
-                          className="flex items-center gap-1"
+                          className="flex items-center gap-1 bg-[#e74c3c] hover:bg-[#c0392b]"
                         >
                           <Trash2 size={14} />
                           <span>Eliminar</span>
