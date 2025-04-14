@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase, Artist } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -60,11 +61,16 @@ const Artists = () => {
         }
         
         // Mark which artists the user is following and ensure follower_count is handled
-        const artistsWithFollowStatus = artistsData?.map(artist => ({
-          ...artist,
-          follower_count: artist.follower_count || 0,
-          isFollowing: followedIds.includes(artist.id)
-        })) || [];
+        const artistsWithFollowStatus = artistsData?.map(artist => {
+          // Create a new object with the artist properties
+          return {
+            ...artist,
+            // Add follower_count property (default to 0)
+            follower_count: 0,
+            // Add isFollowing property
+            isFollowing: followedIds.includes(artist.id)
+          };
+        }) || [];
         
         setArtists(artistsWithFollowStatus);
         setFollowedArtists(artistsWithFollowStatus.filter(artist => artist.isFollowing));
