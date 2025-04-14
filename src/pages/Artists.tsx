@@ -68,14 +68,14 @@ const Artists = () => {
           
           if (followsError) throw followsError;
           
-          followedIds = followsData.map(follow => follow.artist_id);
+          followedIds = followsData?.map(follow => follow.artist_id) || [];
         }
         
         // Mark which artists the user is following
-        const artistsWithFollowStatus = artistsData.map(artist => ({
+        const artistsWithFollowStatus = artistsData?.map(artist => ({
           ...artist,
           isFollowing: followedIds.includes(artist.id)
-        }));
+        })) || [];
         
         setArtists(artistsWithFollowStatus);
         setFollowedArtists(artistsWithFollowStatus.filter(artist => artist.isFollowing));

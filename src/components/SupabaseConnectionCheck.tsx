@@ -10,7 +10,10 @@ const SupabaseConnectionCheck = () => {
   const checkConnection = async () => {
     try {
       // Simple query to check if we can connect to Supabase
-      const { data, error } = await supabase.from('artists').select('id').limit(1);
+      const { data, error } = await supabase
+        .from('artists')
+        .select('id')
+        .limit(1);
       
       if (error) {
         throw error;

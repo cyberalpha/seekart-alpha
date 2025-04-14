@@ -11,49 +11,6 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-// Add custom type declarations for type safety in components
-// These help TypeScript understand our table structures
-declare module '@supabase/supabase-js' {
-  interface SupabaseClient<Database> {
-    from<T extends keyof Database['public']['Tables']>(
-      table: T
-    ): SupabaseQueryBuilder<Database['public']['Tables'][T]>;
-  }
-  
-  interface SupabaseQueryBuilder<T> {
-    select(
-      columns?: string
-    ): PostgrestFilterBuilder<T>;
-    insert(
-      values: T['Insert'] | T['Insert'][]
-    ): PostgrestFilterBuilder<T>;
-    upsert(
-      values: T['Insert'] | T['Insert'][]
-    ): PostgrestFilterBuilder<T>;
-    update(
-      values: T['Update']
-    ): PostgrestFilterBuilder<T>;
-    delete(): PostgrestFilterBuilder<T>;
-    eq(column: string, value: any): PostgrestFilterBuilder<T>;
-    neq(column: string, value: any): PostgrestFilterBuilder<T>;
-    order(column: string, options?: { ascending?: boolean }): PostgrestFilterBuilder<T>;
-    single(): Promise<{ data: T['Row'] | null; error: PostgrestError | null }>;
-    maybeSingle(): Promise<{ data: T['Row'] | null; error: PostgrestError | null }>;
-  }
-  
-  interface PostgrestFilterBuilder<T> {
-    eq(column: string, value: any): PostgrestFilterBuilder<T>;
-    neq(column: string, value: any): PostgrestFilterBuilder<T>;
-    gt(column: string, value: any): PostgrestFilterBuilder<T>;
-    lt(column: string, value: any): PostgrestFilterBuilder<T>;
-    gte(column: string, value: any): PostgrestFilterBuilder<T>;
-    lte(column: string, value: any): PostgrestFilterBuilder<T>;
-    order(column: string, options?: { ascending?: boolean }): PostgrestFilterBuilder<T>;
-    single(): Promise<{ data: T['Row'] | null; error: PostgrestError | null }>;
-    maybeSingle(): Promise<{ data: T['Row'] | null; error: PostgrestError | null }>;
-  }
-}
-
 // Define helper types for strongly-typed queries
 export type Tables = Database['public']['Tables'];
 export type Artist = Tables['artists']['Row'];

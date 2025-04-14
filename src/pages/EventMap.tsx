@@ -9,8 +9,15 @@ import { Button } from "@/components/ui/button";
 import { Search, Map as MapIcon } from "lucide-react";
 import type { Event } from "@/integrations/supabase/client";
 
+type EventWithArtist = Event & {
+  artists: {
+    name: string;
+    profile_image: string | null;
+  } | null;
+};
+
 const EventMap = () => {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventWithArtist[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
