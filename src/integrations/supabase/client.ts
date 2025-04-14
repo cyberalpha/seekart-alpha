@@ -13,7 +13,10 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
 
 // Define helper types for strongly-typed queries
 export type Tables = Database['public']['Tables'];
-export type Artist = Tables['artists']['Row'];
+export type Artist = Tables['artists']['Row'] & { 
+  follower_count?: number | null;
+  isFollowing?: boolean; 
+};
 export type Fan = Tables['fans']['Row'];
 export type Event = Tables['events']['Row'];
 export type Follow = Tables['follows']['Row'];

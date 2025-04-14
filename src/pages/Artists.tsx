@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, Artist } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,17 +8,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRound, Search, Heart, HeartOff } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-
-type Artist = {
-  id: string;
-  name: string;
-  description: string | null;
-  facebook_url: string | null;
-  instagram_url: string | null;
-  profile_image: string | null;
-  follower_count: number | null;
-  isFollowing?: boolean;
-};
 
 const Artists = () => {
   const [artists, setArtists] = useState<Artist[]>([]);
@@ -71,9 +59,10 @@ const Artists = () => {
           followedIds = followsData?.map(follow => follow.artist_id) || [];
         }
         
-        // Mark which artists the user is following
+        // Mark which artists the user is following and ensure follower_count is handled
         const artistsWithFollowStatus = artistsData?.map(artist => ({
           ...artist,
+          follower_count: artist.follower_count || 0,
           isFollowing: followedIds.includes(artist.id)
         })) || [];
         
