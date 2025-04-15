@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import {
   NavigationMenu,
@@ -13,7 +12,7 @@ import { Calendar, Home, Heart, Map, Users, Cog } from "lucide-react";
 export const NavLinks = () => {
   return (
     <NavigationMenu>
-      <NavigationMenuList>
+      <NavigationMenuList className="relative">
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link
@@ -43,7 +42,7 @@ export const NavLinks = () => {
             <Users size={16} />
             <span>Explorar</span>
           </NavigationMenuTrigger>
-          <NavigationMenuContent className="min-w-[200px]">
+          <NavigationMenuContent className="absolute left-0 w-[200px]">
             <ul className="grid w-full gap-3 p-4">
               <li>
                 <NavigationMenuLink asChild>

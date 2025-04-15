@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -52,12 +51,12 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
     
     /* SeekArt color palette */
-    --seekart-green: 145 66% 49%;
-    --seekart-red: 6 78% 57%;
-    --seekart-blue: 204 70% 53%;
-    --seekart-yellow: 48 89% 50%;
-    --seekart-orange: 28 80% 52%;
-    --seekart-purple: 282 44% 53%;
+    --seekart-red: 0 100% 50%;      /* Red marker */
+    --seekart-orange: 30 100% 50%;   /* Orange marker */
+    --seekart-yellow: 60 100% 50%;   /* Yellow marker */
+    --seekart-green: 120 100% 50%;   /* Green marker */
+    --seekart-blue: 240 100% 50%;    /* Blue marker */
+    --seekart-purple: 280 100% 50%;  /* Purple marker */
   }
 
   .dark {
