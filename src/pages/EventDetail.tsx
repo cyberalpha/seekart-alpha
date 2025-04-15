@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,21 +8,19 @@ import { Calendar, MapPin, Link, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { artTypes } from "./ArtistProfile";
-
 const EventDetail = () => {
-  const { eventId } = useParams();
+  const {
+    eventId
+  } = useParams();
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const { data, error } = await supabase
-          .from('events')
-          .select('*, artists(*)')
-          .eq('id', eventId)
-          .single();
-
+        const {
+          data,
+          error
+        } = await supabase.from('events').select('*, artists(*)').eq('id', eventId).single();
         if (error) throw error;
         setEvent(data);
       } catch (error) {
@@ -32,34 +29,25 @@ const EventDetail = () => {
         setLoading(false);
       }
     };
-
     fetchEvent();
   }, [eventId]);
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+    return <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
         <Navbar />
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
           <p>Cargando evento...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!event) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+    return <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
         <Navbar />
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
           <p>Evento no encontrado</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+  return <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
       <Navbar />
       
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
@@ -74,11 +62,7 @@ const EventDetail = () => {
           <div className="md:col-span-8">
             <Card>
               <div className="aspect-video w-full overflow-hidden">
-                <img
-                  src={event.image_url}
-                  alt={event.title}
-                  className="h-full w-full object-cover"
-                />
+                <img src={event.image_url} alt={event.title} className="h-full w-full object-cover" />
               </div>
               
               <CardContent className="p-6">
@@ -89,16 +73,14 @@ const EventDetail = () => {
                   </div>
 
                   <div>
-                    <h2 className="text-xl font-semibold">Tipos de arte</h2>
+                    <h2 className="text-xl font-semibold">Tipos de evento</h2>
                     <div className="mt-2 flex flex-wrap gap-2">
                       {event.art_types?.map((typeId: string) => {
-                        const type = artTypes.find(t => t.id === typeId);
-                        return type ? (
-                          <Badge key={type.id} className={type.color + ' text-white'}>
+                      const type = artTypes.find(t => t.id === typeId);
+                      return type ? <Badge key={type.id} className={type.color + ' text-white'}>
                             {type.name}
-                          </Badge>
-                        ) : null;
-                      })}
+                          </Badge> : null;
+                    })}
                     </div>
                   </div>
                 </div>
@@ -123,8 +105,7 @@ const EventDetail = () => {
                   </div>
                 </div>
 
-                {event.address && (
-                  <div className="flex items-start gap-2">
+                {event.address && <div className="flex items-start gap-2">
                     <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
                     <div>
                       <p className="font-medium">Ubicación</p>
@@ -132,47 +113,30 @@ const EventDetail = () => {
                         {event.address}
                         {event.city && `, ${event.city}`}
                       </p>
-                      {event.cross_streets && (
-                        <p className="text-sm text-gray-600">
+                      {event.cross_streets && <p className="text-sm text-gray-600">
                           Entre calles: {event.cross_streets}
-                        </p>
-                      )}
+                        </p>}
                     </div>
-                  </div>
-                )}
+                  </div>}
 
-                {event.ticket_url && (
-                  <Button
-                    variant="default"
-                    className="w-full"
-                    asChild
-                  >
+                {event.ticket_url && <Button variant="default" className="w-full" asChild>
                     <a href={event.ticket_url} target="_blank" rel="noopener noreferrer">
                       <Link className="mr-2 h-4 w-4" />
                       Comprar entradas
                     </a>
-                  </Button>
-                )}
+                  </Button>}
 
-                {event.video_url && (
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    asChild
-                  >
+                {event.video_url && <Button variant="outline" className="w-full" asChild>
                     <a href={event.video_url} target="_blank" rel="noopener noreferrer">
                       <Video className="mr-2 h-4 w-4" />
                       Ver video
                     </a>
-                  </Button>
-                )}
+                  </Button>}
               </CardContent>
             </Card>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default EventDetail;
