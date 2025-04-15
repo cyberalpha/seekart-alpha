@@ -64,12 +64,12 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				seekart: {
-					green: '#2ecc71',
-					red: '#e74c3c',
-					blue: '#3498db',
-					yellow: '#f1c40f',
-					orange: '#e67e22',
-					purple: '#9b59b6'
+					green: 'hsl(var(--seekart-green))',
+					red: 'hsl(var(--seekart-red))',
+					blue: 'hsl(var(--seekart-blue))',
+					yellow: 'hsl(var(--seekart-yellow))',
+					orange: 'hsl(var(--seekart-orange))',
+					purple: 'hsl(var(--seekart-purple))'
 				}
 			},
 			borderRadius: {
@@ -98,8 +98,37 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
+			},
+			backgroundImage: {
+				'gradient-seekart': 'linear-gradient(135deg, #9b87f5 0%, #7E69AB 100%)',
 			}
 		}
 	},
+	safelist: [
+		'bg-seekart-green',
+		'bg-seekart-red',
+		'bg-seekart-blue',
+		'bg-seekart-yellow',
+		'bg-seekart-orange',
+		'bg-seekart-purple',
+		'hover:bg-seekart-green/10',
+		'hover:bg-seekart-red/10',
+		'hover:bg-seekart-blue/10',
+		'hover:bg-seekart-yellow/10',
+		'hover:bg-seekart-orange/10',
+		'hover:bg-seekart-purple/10',
+		'border-seekart-green',
+		'border-seekart-red',
+		'border-seekart-blue',
+		'border-seekart-yellow',
+		'border-seekart-orange',
+		'border-seekart-purple',
+		'hover:border-seekart-green/30',
+		'hover:border-seekart-red/30',
+		'hover:border-seekart-blue/30',
+		'hover:border-seekart-yellow/30',
+		'hover:border-seekart-orange/30',
+		'hover:border-seekart-purple/30',
+	],
 	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
