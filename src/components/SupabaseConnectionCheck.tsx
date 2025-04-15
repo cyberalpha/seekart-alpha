@@ -62,12 +62,12 @@ const SupabaseConnectionCheck = () => {
       
       <div className="space-y-4">
         <div>
-          <p className="font-medium">Conexión a base de datos:</p>
+          <p className="font-medium">Conexión:</p>
           {isConnected === null ? <p>Verificando conexión...</p> : isConnected ? <p className="text-green-600">✓ Conectado correctamente</p> : <p className="text-red-600">✗ Error de conexión</p>}
         </div>
 
         <div>
-          <p className="font-medium">Estado de autenticación:</p>
+          <p className="font-medium">Autenticación:</p>
           {session ? <p className="text-green-600">✓ Usuario autenticado</p> : <p className="text-yellow-600">! Usuario no autenticado</p>}
         </div>
       
