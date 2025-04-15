@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -5,6 +6,7 @@ import ArtistProfile from "./pages/ArtistProfile";
 import FanProfile from "./pages/FanProfile";
 import EventMap from "./pages/EventMap";
 import Events from "./pages/Events";
+import EventDetail from "./pages/EventDetail";
 import Artists from "./pages/Artists";
 import Donations from "./pages/Donations";
 import CreateEvent from "./pages/CreateEvent";
