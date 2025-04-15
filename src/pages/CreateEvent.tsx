@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +22,6 @@ const CreateEvent = () => {
   const [city, setCity] = useState("");
   const [crossStreets, setCrossStreets] = useState("");
   const [locality, setLocality] = useState("");
-  const [eventType, setEventType] = useState("");
   const [selectedArtTypes, setSelectedArtTypes] = useState<string[]>([]);
   const [ticketUrl, setTicketUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
@@ -159,13 +157,13 @@ const CreateEvent = () => {
       
       const eventData = {
         title,
-        description: description || null, // Ahora puede ser null
+        description: description || null,
         date,
-        address: address || null, // Ahora puede ser null
-        city: city || null, // Ahora puede ser null
-        cross_streets: crossStreets || null, // Ahora puede ser null
-        locality: locality || null, // Ahora puede ser null
-        type: eventType,
+        address: address || null,
+        city: city || null,
+        cross_streets: crossStreets || null,
+        locality: locality || null,
+        type: selectedArtTypes[0],
         art_types: selectedArtTypes,
         ticket_url: ticketUrl || null,
         video_url: videoUrl || null,
@@ -262,17 +260,6 @@ const CreateEvent = () => {
                       </Badge>
                     ))}
                   </div>
-                </div>
-                
-                <div>
-                  <Label htmlFor="eventType">Tipo de evento *</Label>
-                  <Input
-                    id="eventType"
-                    value={eventType}
-                    onChange={(e) => setEventType(e.target.value)}
-                    placeholder="Concierto, Exposición, Taller, etc."
-                    required
-                  />
                 </div>
                 
                 <div className="space-y-4">

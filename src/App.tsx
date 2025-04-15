@@ -28,6 +28,7 @@ function App() {
           <Route path="/fan-profile" element={<FanProfile />} />
           <Route path="/map" element={<EventMap />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/events/:eventId" element={<EventDetail />} />
           <Route path="/artists" element={<Artists />} />
           <Route path="/donations" element={<Donations />} />
           <Route path="/system-check" element={<SystemCheck />} />
