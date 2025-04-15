@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -11,6 +10,7 @@ import Donations from "./pages/Donations";
 import CreateEvent from "./pages/CreateEvent";
 import EditEvent from "./pages/EditEvent";
 import NotFound from "./pages/NotFound";
+import SystemCheck from "./pages/SystemCheck";
 import StorageBucketInitializer from "./components/StorageBucketInitializer";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/ui/theme-provider";
@@ -30,6 +30,7 @@ function App() {
           <Route path="/events" element={<Events />} />
           <Route path="/artists" element={<Artists />} />
           <Route path="/donations" element={<Donations />} />
+          <Route path="/system-check" element={<SystemCheck />} />
           <Route path="/create-event" element={<CreateEvent />} />
           <Route path="/edit-event/:eventId" element={<EditEvent />} />
           <Route path="/404" element={<NotFound />} />

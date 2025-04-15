@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -8,11 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import type { Event } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 const Events = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -108,7 +109,12 @@ const Events = () => {
                     {event.description}
                   </p>
                   
-                  <Button className="w-full">Ver detalles</Button>
+                  <Button 
+                    className="w-full"
+                    onClick={() => navigate(`/events/${event.id}`)}
+                  >
+                    Ver detalles
+                  </Button>
                 </CardContent>
               </Card>
             ))}

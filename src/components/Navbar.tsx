@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Session } from "@supabase/supabase-js";
 import { useToast } from "@/components/ui/use-toast";
-import { UserRound, Map, Heart, Home, Users, Calendar } from "lucide-react";
+import { UserRound, Map, Heart, Home, Users, Calendar, Inbox, Cog } from "lucide-react";
 
 const Navbar = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -31,32 +30,26 @@ const Navbar = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Get current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       
-      // Get user type and profile image if there's a session
       if (session?.user) {
         const userMetadata = session.user.user_metadata;
         setUserType(userMetadata?.user_type || null);
         
-        // Fetch profile image based on user type
         fetchProfileImage(session.user.id, userMetadata?.user_type);
       }
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       
-      // Update user type and profile image when session changes
       if (session?.user) {
         const userMetadata = session.user.user_metadata;
         setUserType(userMetadata?.user_type || null);
         
-        // Fetch profile image based on user type
         fetchProfileImage(session.user.id, userMetadata?.user_type);
       } else {
         setUserType(null);
@@ -146,11 +139,12 @@ const Navbar = () => {
             </NavigationMenuItem>
 
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-sm font-medium text-gray-700">
-                Explorar
+              <NavigationMenuTrigger className="flex items-center gap-1 text-sm font-medium text-gray-700">
+                <Users size={16} />
+                <span>Explorar</span>
               </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[200px] gap-3 p-4">
+              <NavigationMenuContent className="min-w-[200px]">
+                <ul className="grid w-full gap-3 p-4">
                   <li>
                     <NavigationMenuLink asChild>
                       <Link
@@ -185,6 +179,18 @@ const Navbar = () => {
                 >
                   <Heart size={16} />
                   <span>Donaciones</span>
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link
+                  to="/system-check"
+                  className="flex items-center gap-1 rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                >
+                  <Cog size={16} />
+                  <span>Sistema</span>
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
