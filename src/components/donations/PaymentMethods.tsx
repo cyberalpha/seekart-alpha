@@ -31,7 +31,7 @@ const PaymentMethods = () => {
           </div>
           <div className="space-y-2">
             <h3 className="font-medium">PayPal</h3>
-            <Button className="https://www.paypal.com/paypalme/cristophelico">Donar</Button>
+            <Button className="w-full">Donar</Button>
             <p className="text-sm text-muted-foreground">
               Haz clic en el botón para realizar tu donación a través de PayPal
             </p>
