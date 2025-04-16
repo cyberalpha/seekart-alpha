@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -53,7 +52,7 @@ export const EventMapView = () => {
         return;
       }
 
-      // Obtener la ubicación del usuario desde la base de datos
+      // Obtener la ubicación del usuario desde la tabla de perfiles
       const { data: userData, error } = await supabase
         .from('profiles')
         .select('latitude, longitude')
@@ -159,10 +158,10 @@ export const EventMapView = () => {
     radiusCircle.current.setData(createGeoJSONCircle(userLocation, radius[0]));
   }, [radius, userLocation]);
 
-  const createGeoJSONCircle = (center: [number, number], radiusInKm: number) => {
+  const createGeoJSONCircle = (center: [number, number], radiusInKm: number): mapboxgl.GeoJSON => {
     const points = 64;
     const km = radiusInKm;
-    const ret = [];
+    const ret: number[][] = [];
     const distanceX = km/(111.320*Math.cos(center[1]*Math.PI/180));
     const distanceY = km/110.574;
 
@@ -313,3 +312,5 @@ export const EventMapView = () => {
     </div>
   );
 };
+
+export default EventMapView;
