@@ -31,7 +31,7 @@ const PaymentMethods = () => {
           </div>
           <div className="space-y-2">
             <h3 className="font-medium">PayPal</h3>
-            <Button className="w-full">Donar
+            <Button className="w-full"> Donar
             onClick={() => window.open("https://www.paypal.com/paypalme/cristophelico", "_blank")}
             >
             </Button>
