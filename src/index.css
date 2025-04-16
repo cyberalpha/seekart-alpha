@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -44,7 +43,7 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
     
-    /* SeekArt color palette - Updated with proper HSL values */
+    /* Paleta de colores SeekArt - Actualizada con valores HSL apropiados */
     --seekart-green: 120 65% 44%;    /* Verde - Música */
     --seekart-yellow: 48 100% 50%;   /* Amarillo - Teatro */
     --seekart-red: 0 84% 60%;        /* Rojo - Imágenes y formas */
@@ -71,7 +70,7 @@
   }
 }
 
-/* Custom styles for event type buttons */
+/* Estilos personalizados para botones de tipo de evento */
 .event-type-button {
   @apply transition-all duration-200 border-2 flex items-center gap-2 px-4 py-2 rounded-md;
 }
@@ -80,22 +79,46 @@
   @apply hover:bg-seekart-green/10 hover:border-seekart-green;
 }
 
+.event-type-button-music.bg-seekart-green {
+  @apply bg-seekart-green border-seekart-green text-white;
+}
+
 .event-type-button-theater {
   @apply hover:bg-seekart-yellow/10 hover:border-seekart-yellow;
+}
+
+.event-type-button-theater.bg-seekart-yellow {
+  @apply bg-seekart-yellow border-seekart-yellow text-black;
 }
 
 .event-type-button-visual {
   @apply hover:bg-seekart-red/10 hover:border-seekart-red;
 }
 
+.event-type-button-visual.bg-seekart-red {
+  @apply bg-seekart-red border-seekart-red text-white;
+}
+
 .event-type-button-literature {
   @apply hover:bg-seekart-blue/10 hover:border-seekart-blue;
+}
+
+.event-type-button-literature.bg-seekart-blue {
+  @apply bg-seekart-blue border-seekart-blue text-white;
 }
 
 .event-type-button-cinema {
   @apply hover:bg-seekart-orange/10 hover:border-seekart-orange;
 }
 
+.event-type-button-cinema.bg-seekart-orange {
+  @apply bg-seekart-orange border-seekart-orange text-white;
+}
+
 .event-type-button-other {
   @apply hover:bg-seekart-purple/10 hover:border-seekart-purple;
+}
+
+.event-type-button-other.bg-seekart-purple {
+  @apply bg-seekart-purple border-seekart-purple text-white;
 }

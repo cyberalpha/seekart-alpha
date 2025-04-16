@@ -1,7 +1,6 @@
 
 import Navbar from "@/components/Navbar";
 import { EventMapView } from "@/components/map/EventMapView";
-import { useToast } from "@/components/ui/use-toast";
 
 const EventMap = () => {
   return (
