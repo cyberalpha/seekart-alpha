@@ -39,7 +39,6 @@ export const EventMapView = () => {
   const userMarker = useRef<mapboxgl.Marker | null>(null);
   const radiusCircle = useRef<mapboxgl.GeoJSONSource | null>(null);
 
-  // Obtener la ubicación del usuario autenticado
   useEffect(() => {
     const getUserLocation = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -52,7 +51,6 @@ export const EventMapView = () => {
         return;
       }
 
-      // Obtener la ubicación del usuario desde la tabla de perfiles
       const { data: userData, error } = await supabase
         .from('profiles')
         .select('latitude, longitude')
@@ -60,14 +58,12 @@ export const EventMapView = () => {
         .single();
 
       if (error || !userData?.latitude || !userData?.longitude) {
-        // Si no hay ubicación guardada, intentar obtener la ubicación actual
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(
             async (position) => {
               const newLocation: [number, number] = [position.coords.longitude, position.coords.latitude];
               setUserLocation(newLocation);
               
-              // Guardar la ubicación en la base de datos
               await supabase
                 .from('profiles')
                 .update({
@@ -93,7 +89,6 @@ export const EventMapView = () => {
     getUserLocation();
   }, [toast]);
 
-  // Inicializar el mapa
   useEffect(() => {
     if (!mapToken || !mapContainer.current || !userLocation || map.current) return;
     
@@ -110,14 +105,12 @@ export const EventMapView = () => {
       newMap.addControl(new mapboxgl.NavigationControl(), 'top-right');
       map.current = newMap;
 
-      // Agregar marcador de ubicación del usuario
       userMarker.current = new mapboxgl.Marker({
         color: '#9b87f5',
       })
         .setLngLat(userLocation)
         .addTo(newMap);
 
-      // Agregar círculo de radio de búsqueda
       newMap.on('load', () => {
         newMap.addSource('radius', {
           type: 'geojson',
@@ -152,13 +145,7 @@ export const EventMapView = () => {
     }
   }, [mapToken, userLocation, toast, radius]);
 
-  // Actualizar círculo de radio cuando cambie el radio
-  useEffect(() => {
-    if (!map.current || !userLocation || !radiusCircle.current) return;
-    radiusCircle.current.setData(createGeoJSONCircle(userLocation, radius[0]));
-  }, [radius, userLocation]);
-
-  const createGeoJSONCircle = (center: [number, number], radiusInKm: number): mapboxgl.GeoJSON => {
+  const createGeoJSONCircle = (center: [number, number], radiusInKm: number) => {
     const points = 64;
     const km = radiusInKm;
     const ret: number[][] = [];
@@ -184,7 +171,7 @@ export const EventMapView = () => {
         coordinates: [ret]
       },
       properties: {}
-    };
+    } as GeoJSON.Feature<GeoJSON.Polygon>;
   };
 
   const handleSetToken = () => {
@@ -198,7 +185,6 @@ export const EventMapView = () => {
     }
   };
 
-  // Cargar token desde localStorage
   useEffect(() => {
     const savedToken = localStorage.getItem('mapbox_token');
     if (savedToken) {
