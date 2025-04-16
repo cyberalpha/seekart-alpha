@@ -33,6 +33,7 @@ const PaymentMethods = () => {
             <h3 className="font-medium">PayPal</h3>
             <Button className="w-full">Donar
             onClick={() => window.open("https://www.paypal.com/paypalme/cristophelico", "_blank")}
+            >
             </Button>
             <p className="text-sm text-muted-foreground">
               Haz clic en el botón para realizar tu donación a través de PayPal
