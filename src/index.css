@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -43,13 +44,13 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
     
-    /* Paleta de colores SeekArt - Actualizada con valores HSL apropiados */
-    --seekart-green: 120 65% 44%;    /* Verde - Música */
-    --seekart-yellow: 48 100% 50%;   /* Amarillo - Teatro */
-    --seekart-red: 0 84% 60%;        /* Rojo - Imágenes y formas */
-    --seekart-blue: 210 100% 56%;    /* Azul - Letras */
-    --seekart-orange: 30 100% 50%;   /* Naranja - Cine */
-    --seekart-purple: 280 76% 66%;   /* Púrpura - Otros */
+    /* Paleta de colores SeekArt - Actualizada con colores más brillantes basados en la imagen */
+    --seekart-green: 120 100% 50%;    /* Verde brillante - Música */
+    --seekart-yellow: 60 100% 50%;    /* Amarillo brillante - Teatro */
+    --seekart-red: 0 100% 50%;        /* Rojo brillante - Imágenes y formas */
+    --seekart-blue: 240 100% 50%;     /* Azul brillante - Letras */
+    --seekart-orange: 30 100% 50%;    /* Naranja brillante - Cine */
+    --seekart-purple: 300 100% 50%;   /* Púrpura brillante - Otros */
   }
 
   .dark {
@@ -108,7 +109,7 @@
 .event-type-button-music.selected {
   background-color: hsl(var(--seekart-green));
   border-color: hsl(var(--seekart-green));
-  color: white;
+  color: black;
 }
 
 /* Teatro - Amarillo */
@@ -174,4 +175,14 @@
   background-color: hsl(var(--seekart-purple));
   border-color: hsl(var(--seekart-purple));
   color: white;
+}
+
+/* Estilos personalizados para marcadores de eventos */
+.event-marker {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.event-marker:hover {
+  transform: scale(1.2);
 }
