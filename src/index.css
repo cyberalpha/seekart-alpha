@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -75,50 +76,80 @@
   @apply transition-all duration-200 border-2 flex items-center gap-2 px-4 py-2 rounded-md;
 }
 
+/* Música - Verde */
 .event-type-button-music {
-  @apply hover:bg-seekart-green/10 hover:border-seekart-green;
+  @apply hover:border-seekart-green;
+}
+.event-type-button-music:hover {
+  background-color: hsla(var(--seekart-green), 0.1);
+}
+.event-type-button-music.selected {
+  background-color: hsl(var(--seekart-green));
+  border-color: hsl(var(--seekart-green));
+  color: white;
 }
 
-.event-type-button-music.bg-seekart-green {
-  @apply bg-seekart-green border-seekart-green text-white;
-}
-
+/* Teatro - Amarillo */
 .event-type-button-theater {
-  @apply hover:bg-seekart-yellow/10 hover:border-seekart-yellow;
+  @apply hover:border-seekart-yellow;
+}
+.event-type-button-theater:hover {
+  background-color: hsla(var(--seekart-yellow), 0.1);
+}
+.event-type-button-theater.selected {
+  background-color: hsl(var(--seekart-yellow));
+  border-color: hsl(var(--seekart-yellow));
+  color: black;
 }
 
-.event-type-button-theater.bg-seekart-yellow {
-  @apply bg-seekart-yellow border-seekart-yellow text-black;
-}
-
+/* Imágenes y formas - Rojo */
 .event-type-button-visual {
-  @apply hover:bg-seekart-red/10 hover:border-seekart-red;
+  @apply hover:border-seekart-red;
+}
+.event-type-button-visual:hover {
+  background-color: hsla(var(--seekart-red), 0.1);
+}
+.event-type-button-visual.selected {
+  background-color: hsl(var(--seekart-red));
+  border-color: hsl(var(--seekart-red));
+  color: white;
 }
 
-.event-type-button-visual.bg-seekart-red {
-  @apply bg-seekart-red border-seekart-red text-white;
-}
-
+/* Letras - Azul */
 .event-type-button-literature {
-  @apply hover:bg-seekart-blue/10 hover:border-seekart-blue;
+  @apply hover:border-seekart-blue;
+}
+.event-type-button-literature:hover {
+  background-color: hsla(var(--seekart-blue), 0.1);
+}
+.event-type-button-literature.selected {
+  background-color: hsl(var(--seekart-blue));
+  border-color: hsl(var(--seekart-blue));
+  color: white;
 }
 
-.event-type-button-literature.bg-seekart-blue {
-  @apply bg-seekart-blue border-seekart-blue text-white;
-}
-
+/* Cine - Naranja */
 .event-type-button-cinema {
-  @apply hover:bg-seekart-orange/10 hover:border-seekart-orange;
+  @apply hover:border-seekart-orange;
+}
+.event-type-button-cinema:hover {
+  background-color: hsla(var(--seekart-orange), 0.1);
+}
+.event-type-button-cinema.selected {
+  background-color: hsl(var(--seekart-orange));
+  border-color: hsl(var(--seekart-orange));
+  color: white;
 }
 
-.event-type-button-cinema.bg-seekart-orange {
-  @apply bg-seekart-orange border-seekart-orange text-white;
-}
-
+/* Otros - Púrpura */
 .event-type-button-other {
-  @apply hover:bg-seekart-purple/10 hover:border-seekart-purple;
+  @apply hover:border-seekart-purple;
 }
-
-.event-type-button-other.bg-seekart-purple {
-  @apply bg-seekart-purple border-seekart-purple text-white;
+.event-type-button-other:hover {
+  background-color: hsla(var(--seekart-purple), 0.1);
+}
+.event-type-button-other.selected {
+  background-color: hsl(var(--seekart-purple));
+  border-color: hsl(var(--seekart-purple));
+  color: white;
 }

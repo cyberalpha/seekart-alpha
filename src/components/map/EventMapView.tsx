@@ -169,9 +169,7 @@ export const EventMapView = () => {
                   key={type.id} 
                   value={type.id}
                   className={`event-type-button event-type-button-${type.id} ${
-                    selectedTypes.includes(type.id)
-                      ? `bg-${type.color} text-white border-${type.color}`
-                      : ''
+                    selectedTypes.includes(type.id) ? 'selected' : ''
                   }`}
                   aria-label={type.name}
                 >
