@@ -1,11 +1,11 @@
+
 import { useState, useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Slider } from "@/components/ui/slider";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useToast } from "@/components/ui/use-toast";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   Music, 
@@ -13,8 +13,7 @@ import {
   Image as ImageIcon, 
   BookText, 
   Film, 
-  Sparkles,
-  Loader2
+  Sparkles
 } from "lucide-react";
 
 // Definimos los tipos de arte con sus respectivos colores e iconos
@@ -39,20 +38,21 @@ const artTypeMapping = {
 
 // Mapa de colores para marcadores en el mapa
 const markerColors = {
-  'music': '#00ff00', // Verde brillante
-  'theater': '#ffff00', // Amarillo brillante
-  'visual': '#ff0000', // Rojo brillante
-  'literature': '#0000ff', // Azul brillante
-  'cinema': '#ff8000', // Naranja brillante
-  'other': '#ff00ff', // Púrpura brillante
+  'music': '#2CDD68', // Verde brillante (SeekArt)
+  'theater': '#FEDD61', // Amarillo brillante (SeekArt)
+  'visual': '#FE5D5D', // Rojo brillante (SeekArt)
+  'literature': '#4192FE', // Azul brillante (SeekArt)
+  'cinema': '#FF8A2C', // Naranja brillante (SeekArt)
+  'other': '#AF59FF', // Púrpura brillante (SeekArt)
 };
+
+// Token de Mapbox (no lo almacenamos en el localStorage)
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiY3liZXJhbHBoYSIsImEiOiJjbTlqYzR3M2MwYXl4Mmtwd3FwOXpkemNtIn0.f1dR1NX50cVLJPY7ZzAuvQ';
 
 export const EventMapView = () => {
   const { toast } = useToast();
   const [radius, setRadius] = useState([20]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [mapToken, setMapToken] = useState<string>('');
-  const [tokenInput, setTokenInput] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [events, setEvents] = useState<any[]>([]);
@@ -142,10 +142,10 @@ export const EventMapView = () => {
   }, [userLocation, toast]);
 
   useEffect(() => {
-    if (!mapToken || !mapContainer.current || !userLocation || map.current) return;
+    if (!mapContainer.current || !userLocation || map.current) return;
     
     try {
-      mapboxgl.accessToken = mapToken;
+      mapboxgl.accessToken = MAPBOX_TOKEN;
       
       const newMap = new mapboxgl.Map({
         container: mapContainer.current,
@@ -194,11 +194,11 @@ export const EventMapView = () => {
       console.error('Error al inicializar el mapa:', error);
       toast({
         title: "Error",
-        description: "No se pudo cargar el mapa. Por favor, verifica tu token de acceso.",
+        description: "No se pudo cargar el mapa. Por favor, inténtalo de nuevo más tarde.",
         variant: "destructive",
       });
     }
-  }, [mapToken, userLocation, toast, radius]);
+  }, [userLocation, toast, radius]);
 
   // Actualizar el círculo cuando cambia el radio
   useEffect(() => {
@@ -266,8 +266,8 @@ export const EventMapView = () => {
       // Crear elemento para el marcador personalizado
       const el = document.createElement('div');
       el.className = 'event-marker';
-      el.style.width = '30px';
-      el.style.height = '30px';
+      el.style.width = '24px';
+      el.style.height = '24px';
       el.style.borderRadius = '50%';
       el.style.backgroundColor = markerColor;
       el.style.border = '2px solid white';
@@ -322,59 +322,8 @@ export const EventMapView = () => {
     } as GeoJSON.Feature<GeoJSON.Polygon>;
   };
 
-  const handleSetToken = () => {
-    if (tokenInput.trim()) {
-      setMapToken(tokenInput.trim());
-      localStorage.setItem('mapbox_token', tokenInput.trim());
-      toast({
-        title: "Token guardado",
-        description: "El token de Mapbox ha sido guardado y se utilizará para cargar el mapa.",
-      });
-    }
-  };
-
-  useEffect(() => {
-    const savedToken = localStorage.getItem('mapbox_token');
-    if (savedToken) {
-      setMapToken(savedToken);
-      setTokenInput(savedToken);
-    }
-  }, []);
-
   return (
     <div className="flex flex-col h-[calc(100vh-10rem)] gap-4">
-      {!mapToken && (
-        <div className="bg-seekart-blue/5 border border-seekart-blue/20 p-6 rounded-lg mb-4">
-          <h3 className="text-lg font-medium text-gray-800 mb-2">Configuración del Mapa</h3>
-          <p className="text-sm text-gray-600 mb-4">
-            Para visualizar el mapa, necesitas proporcionar un token de acceso de Mapbox.
-            Puedes obtener uno gratuitamente en {" "}
-            <a 
-              href="https://mapbox.com/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-seekart-blue hover:underline"
-            >
-              mapbox.com
-            </a>
-          </p>
-          <div className="flex gap-2">
-            <Input
-              placeholder="Ingresa tu token de acceso de Mapbox"
-              value={tokenInput}
-              onChange={(e) => setTokenInput(e.target.value)}
-              className="flex-1"
-            />
-            <Button 
-              onClick={handleSetToken}
-              className="bg-seekart-blue hover:bg-seekart-blue/90"
-            >
-              Guardar
-            </Button>
-          </div>
-        </div>
-      )}
-      
       <div className="flex-1 relative rounded-lg overflow-hidden shadow-lg bg-gradient-to-br from-slate-100 to-slate-200">
         <div 
           ref={mapContainer} 
@@ -393,7 +342,7 @@ export const EventMapView = () => {
                 </div>
               ) : (
                 <p className="text-lg font-medium text-gray-700">
-                  {mapToken ? "Iniciando mapa..." : "Ingresa un token de Mapbox para ver el mapa"}
+                  Iniciando mapa...
                 </p>
               )}
             </div>
