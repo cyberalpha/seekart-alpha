@@ -5,7 +5,6 @@ import { EventFilters } from './EventFilters';
 import { MapContainer } from './MapContainer';
 import { useLocationData } from './hooks/useLocationData';
 import { artTypes } from './data';
-import { artTypeMapping } from './types';
 
 export const EventMapView = () => {
   const [radius, setRadius] = useState<number[]>([20]);

@@ -6,8 +6,8 @@ import { ArtType, ArtTypeId } from "./types";
 interface EventFiltersProps {
   radius: number[];
   setRadius: (value: number[]) => void;
-  selectedTypes: string[];
-  setSelectedTypes: (value: string[]) => void;
+  selectedTypes: ArtTypeId[];
+  setSelectedTypes: (value: ArtTypeId[]) => void;
   artTypes: ArtType[];
 }
 
@@ -41,9 +41,10 @@ export const EventFilters = ({
         <ToggleGroup 
           type="multiple" 
           variant="outline"
-          value={selectedTypes}
+          value={selectedTypes as string[]}
           onValueChange={(value) => {
-            setSelectedTypes(value);
+            // Cast the string[] to ArtTypeId[]
+            setSelectedTypes(value as ArtTypeId[]);
             console.log("Nuevos filtros:", value);
           }}
           className="flex flex-wrap gap-2"
