@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -15,6 +14,7 @@ import {
   Film, 
   Sparkles
 } from "lucide-react";
+import { MAPBOX_PUBLIC_TOKEN } from '@/config/tokens';
 
 // Definimos los tipos de arte con sus respectivos colores e iconos
 const artTypes = [
@@ -145,7 +145,7 @@ export const EventMapView = () => {
     if (!mapContainer.current || !userLocation || map.current) return;
     
     try {
-      mapboxgl.accessToken = MAPBOX_TOKEN;
+      mapboxgl.accessToken = MAPBOX_PUBLIC_TOKEN;
       
       const newMap = new mapboxgl.Map({
         container: mapContainer.current,
