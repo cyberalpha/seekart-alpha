@@ -1,9 +1,6 @@
-
 import Navbar from "@/components/Navbar";
-
 const Index = () => {
-  return (
-    <div className="min-h-screen">
+  return <div className="min-h-screen">
       <Navbar />
       
       {/* Hero Section */}
@@ -11,20 +8,13 @@ const Index = () => {
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="flex justify-center">
-              <img
-                src="/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png"
-                alt="SeekArt Logo"
-                className="h-24 w-auto mb-4"
-              />
+              <img src="/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png" alt="SeekArt Logo" className="h-24 w-auto mb-4 object-fill" />
             </div>
             <p className="mt-6 text-lg leading-8 text-gray-600">
               Descubre y conecta con artistas locales. Encuentra eventos únicos cerca de ti.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <a
-                href="/auth"
-                className="rounded-md bg-[#9b87f5] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#8a76e4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9b87f5]"
-              >
+              <a href="/auth" className="rounded-md bg-[#9b87f5] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#8a76e4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9b87f5]">
                 Comenzar ahora
               </a>
               <a href="/events" className="text-sm font-semibold leading-6 text-gray-900">
@@ -58,8 +48,6 @@ const Index = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
