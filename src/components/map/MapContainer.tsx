@@ -1,11 +1,9 @@
-
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Loader2 } from "lucide-react";
 import { MAPBOX_PUBLIC_TOKEN } from '@/config/tokens';
-import { ArtTypeId, EventMarker, MapEvent, markerColors } from "./types";
-import { artTypeMapping } from './data';
+import { ArtTypeId, EventMarker, MapEvent, markerColors, artTypeMapping } from "./types";
 
 interface MapContainerProps {
   userLocation: [number, number] | null;
