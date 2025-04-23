@@ -7,22 +7,18 @@ import { useLocationData } from './hooks/useLocationData';
 import { artTypes } from './data';
 
 export const EventMapView = () => {
-  const [radius, setRadius] = useState<number[]>([20]);
   const [selectedTypes, setSelectedTypes] = useState<ArtTypeId[]>([]);
   const { userLocation, events, isLoading } = useLocationData();
 
   return (
-    <div className="flex flex-col h-[calc(100vh-10rem)] gap-4">
+    <div className="flex flex-col h-[calc(100vh-14rem)] gap-4">
       <MapContainer 
         userLocation={userLocation}
-        radius={radius}
         events={events}
         selectedTypes={selectedTypes}
       />
       
       <EventFilters 
-        radius={radius}
-        setRadius={setRadius}
         selectedTypes={selectedTypes}
         setSelectedTypes={setSelectedTypes}
         artTypes={artTypes}

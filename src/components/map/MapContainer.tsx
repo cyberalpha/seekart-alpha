@@ -1,13 +1,14 @@
+
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Loader2 } from "lucide-react";
 import { MAPBOX_PUBLIC_TOKEN } from '@/config/tokens';
-import { ArtTypeId, EventMarker, GeoJSONCircle, MapEvent, markerColors, artTypeMapping } from "./types";
+import { ArtTypeId, EventMarker, MapEvent, markerColors } from "./types";
+import { artTypeMapping } from './data';
 
 interface MapContainerProps {
   userLocation: [number, number] | null;
-  radius: number[];
   events: MapEvent[];
   selectedTypes: ArtTypeId[];
   onMapLoad?: () => void;
@@ -15,7 +16,6 @@ interface MapContainerProps {
 
 export const MapContainer = ({ 
   userLocation, 
-  radius, 
   events, 
   selectedTypes,
   onMapLoad
@@ -24,7 +24,6 @@ export const MapContainer = ({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const userMarker = useRef<mapboxgl.Marker | null>(null);
-  const radiusCircle = useRef<mapboxgl.GeoJSONSource | null>(null);
   const eventMarkers = useRef<EventMarker[]>([]);
 
   useEffect(() => {
@@ -50,24 +49,7 @@ export const MapContainer = ({
         .addTo(newMap);
 
       newMap.on('load', () => {
-        newMap.addSource('radius', {
-          type: 'geojson',
-          data: createGeoJSONCircle(userLocation, radius[0])
-        });
-
-        newMap.addLayer({
-          id: 'radius',
-          type: 'fill',
-          source: 'radius',
-          paint: {
-            'fill-color': '#9b87f5',
-            'fill-opacity': 0.1
-          }
-        });
-
-        radiusCircle.current = newMap.getSource('radius') as mapboxgl.GeoJSONSource;
         setLoading(false);
-        
         updateVisibleEvents();
         
         if (onMapLoad) {
@@ -86,46 +68,10 @@ export const MapContainer = ({
   }, [userLocation, onMapLoad]);
 
   useEffect(() => {
-    if (!map.current || !userLocation || !radiusCircle.current) return;
-    radiusCircle.current.setData(createGeoJSONCircle(userLocation, radius[0]));
-    
-    updateVisibleEvents();
-  }, [radius, userLocation]);
-
-  useEffect(() => {
     if (map.current) {
       updateVisibleEvents();
     }
   }, [selectedTypes, events]);
-
-  const createGeoJSONCircle = (center: [number, number], radiusInKm: number): GeoJSONCircle => {
-    const points = 64;
-    const km = radiusInKm;
-    const ret: number[][] = [];
-    const distanceX = km/(111.320*Math.cos(center[1]*Math.PI/180));
-    const distanceY = km/110.574;
-
-    let theta;
-    let x;
-    let y;
-
-    for(let i = 0; i < points; i++) {
-      theta = (i/points)*(2*Math.PI);
-      x = distanceX*Math.cos(theta);
-      y = distanceY*Math.sin(theta);
-      ret.push([center[0] + x, center[1] + y]);
-    }
-    ret.push(ret[0]);
-
-    return {
-      type: 'Feature',
-      geometry: {
-        type: 'Polygon',
-        coordinates: [ret]
-      },
-      properties: {}
-    } as GeoJSONCircle;
-  };
 
   const updateVisibleEvents = () => {
     eventMarkers.current.forEach(marker => marker.marker.remove());

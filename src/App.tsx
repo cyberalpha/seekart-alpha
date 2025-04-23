@@ -1,5 +1,8 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "./integrations/supabase/client";
+import { Session } from "@supabase/supabase-js";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ArtistProfile from "./pages/ArtistProfile";
@@ -19,6 +22,42 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import "./App.css";
 
 function App() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_, session) => {
+        setSession(session);
+        setIsLoading(false);
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setIsLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Protected route component
+  const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+    if (isLoading) {
+      return <div className="h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-seekart-purple"></div>
+      </div>;
+    }
+    
+    if (!session) {
+      return <Navigate to="/auth" replace />;
+    }
+    
+    return <>{children}</>;
+  };
+
   return (
     <ThemeProvider defaultTheme="light">
       <Router>
@@ -26,16 +65,48 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/artist-profile" element={<ArtistProfile />} />
-          <Route path="/fan-profile" element={<FanProfile />} />
-          <Route path="/map" element={<EventMap />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/events/:eventId" element={<EventDetail />} />
-          <Route path="/artists" element={<Artists />} />
+          <Route path="/artist-profile" element={
+            <ProtectedRoute>
+              <ArtistProfile />
+            </ProtectedRoute>
+          } />
+          <Route path="/fan-profile" element={
+            <ProtectedRoute>
+              <FanProfile />
+            </ProtectedRoute>
+          } />
+          <Route path="/map" element={
+            <ProtectedRoute>
+              <EventMap />
+            </ProtectedRoute>
+          } />
+          <Route path="/events" element={
+            <ProtectedRoute>
+              <Events />
+            </ProtectedRoute>
+          } />
+          <Route path="/events/:eventId" element={
+            <ProtectedRoute>
+              <EventDetail />
+            </ProtectedRoute>
+          } />
+          <Route path="/artists" element={
+            <ProtectedRoute>
+              <Artists />
+            </ProtectedRoute>
+          } />
           <Route path="/donations" element={<Donations />} />
           <Route path="/system-check" element={<SystemCheck />} />
-          <Route path="/create-event" element={<CreateEvent />} />
-          <Route path="/edit-event/:eventId" element={<EditEvent />} />
+          <Route path="/create-event" element={
+            <ProtectedRoute>
+              <CreateEvent />
+            </ProtectedRoute>
+          } />
+          <Route path="/edit-event/:eventId" element={
+            <ProtectedRoute>
+              <EditEvent />
+            </ProtectedRoute>
+          } />
           <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
