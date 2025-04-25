@@ -85,14 +85,19 @@ export const MapContainer = ({
   }, [selectedTypes, events]);
 
   const updateVisibleEvents = () => {
+    // Remove all existing markers first
     eventMarkers.current.forEach(marker => marker.marker.remove());
     eventMarkers.current = [];
     
     if (!map.current || !userLocation) return;
     
+    // Only show event markers if there are selected types
+    // This fixes the bug where markers still show when no filters are selected
+    if (selectedTypes.length === 0) {
+      return;
+    }
+    
     const filteredEvents = events.filter(event => {
-      if (selectedTypes.length === 0) return true;
-      
       if (!event.art_types) return false;
       
       const eventTypeIds = event.art_types.map((type: string) => {
