@@ -11,8 +11,8 @@ export const EventMapView = () => {
   const { userLocation, events, isLoading } = useLocationData();
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-10rem)]">
-      <div className="flex-grow w-full md:w-3/4">
+    <div className="relative h-[calc(100vh-5rem)]">
+      <div className="h-full w-full">
         <MapContainer 
           userLocation={userLocation}
           events={events}
@@ -20,7 +20,7 @@ export const EventMapView = () => {
         />
       </div>
       
-      <div className="w-full md:w-1/4">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-full max-w-3xl px-4">
         <EventFilters 
           selectedTypes={selectedTypes}
           setSelectedTypes={setSelectedTypes}

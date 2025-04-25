@@ -2,11 +2,9 @@
 import { Link } from "react-router-dom";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { Calendar, Home, Heart, Map, Users, Cog } from "lucide-react";
 
@@ -33,42 +31,33 @@ export const NavLinks = () => {
               className="flex items-center gap-1 rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
             >
               <Map size={16} />
-              <span>Mapa de Eventos</span>
+              <span>Mapa</span>
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="flex items-center gap-1 text-sm font-medium text-gray-700 data-[state=open]:bg-gray-100">
-            <Users size={16} />
-            <span>Explorar</span>
-          </NavigationMenuTrigger>
-          <NavigationMenuContent className="absolute left-0 w-[200px]">
-            <ul className="grid w-full gap-3 p-4">
-              <li>
-                <NavigationMenuLink asChild>
-                  <Link
-                    to="/artists"
-                    className="flex items-center gap-2 rounded p-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-                  >
-                    <Users size={16} />
-                    <span>Artistas</span>
-                  </Link>
-                </NavigationMenuLink>
-              </li>
-              <li>
-                <NavigationMenuLink asChild>
-                  <Link
-                    to="/events"
-                    className="flex items-center gap-2 rounded p-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-                  >
-                    <Calendar size={16} />
-                    <span>Eventos</span>
-                  </Link>
-                </NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
+          <NavigationMenuLink asChild>
+            <Link
+              to="/artists"
+              className="flex items-center gap-1 rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+            >
+              <Users size={16} />
+              <span>Artistas</span>
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <Link
+              to="/events"
+              className="flex items-center gap-1 rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+            >
+              <Calendar size={16} />
+              <span>Eventos</span>
+            </Link>
+          </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
