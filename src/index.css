@@ -100,7 +100,7 @@
 
 /* Música - Verde */
 .event-type-button-music {
-  @apply hover:border-seekart-green;
+  @apply hover:border-seekart-green/50;
 }
 .event-type-button-music:hover {
   background-color: hsla(var(--seekart-green), 0.1);
@@ -108,12 +108,12 @@
 .event-type-button-music.selected {
   background-color: hsl(var(--seekart-green));
   border-color: hsl(var(--seekart-green));
-  color: black;
+  color: white;
 }
 
 /* Teatro - Amarillo */
 .event-type-button-theater {
-  @apply hover:border-seekart-yellow;
+  @apply hover:border-seekart-yellow/50;
 }
 .event-type-button-theater:hover {
   background-color: hsla(var(--seekart-yellow), 0.1);
@@ -126,7 +126,7 @@
 
 /* Imágenes y formas - Rojo */
 .event-type-button-visual {
-  @apply hover:border-seekart-red;
+  @apply hover:border-seekart-red/50;
 }
 .event-type-button-visual:hover {
   background-color: hsla(var(--seekart-red), 0.1);
@@ -139,7 +139,7 @@
 
 /* Letras - Azul */
 .event-type-button-literature {
-  @apply hover:border-seekart-blue;
+  @apply hover:border-seekart-blue/50;
 }
 .event-type-button-literature:hover {
   background-color: hsla(var(--seekart-blue), 0.1);
@@ -152,7 +152,7 @@
 
 /* Cine - Naranja */
 .event-type-button-cinema {
-  @apply hover:border-seekart-orange;
+  @apply hover:border-seekart-orange/50;
 }
 .event-type-button-cinema:hover {
   background-color: hsla(var(--seekart-orange), 0.1);
@@ -165,7 +165,7 @@
 
 /* Otros - Púrpura */
 .event-type-button-other {
-  @apply hover:border-seekart-purple;
+  @apply hover:border-seekart-purple/50;
 }
 .event-type-button-other:hover {
   background-color: hsla(var(--seekart-purple), 0.1);

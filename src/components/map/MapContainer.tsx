@@ -40,9 +40,14 @@ export const MapContainer = ({
       newMap.addControl(new mapboxgl.NavigationControl(), 'top-right');
       map.current = newMap;
 
-      userMarker.current = new mapboxgl.Marker({
-        color: '#9b87f5',
-      })
+      const el = document.createElement('div');
+      el.className = 'location-marker';
+      el.style.backgroundImage = 'url("data:image/svg+xml;charset=utf-8,%3Csvg width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M12 0C7.58 0 4 3.58 4 8c0 5.25 8 13 8 13s8-7.75 8-13c0-4.42-3.58-8-8-8zm0 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z\' fill=\'%23000000\'/%3E%3C/svg%3E")';
+      el.style.width = '24px';
+      el.style.height = '24px';
+      el.style.backgroundSize = 'cover';
+
+      userMarker.current = new mapboxgl.Marker({ element: el })
         .setLngLat(userLocation)
         .addTo(newMap);
 
@@ -77,8 +82,6 @@ export const MapContainer = ({
     
     if (!map.current || !userLocation) return;
     
-    console.log("Actualizando eventos visibles con filtros:", selectedTypes);
-    
     const filteredEvents = events.filter(event => {
       if (selectedTypes.length === 0) return true;
       
@@ -93,12 +96,10 @@ export const MapContainer = ({
       return eventTypeIds.some(type => selectedTypes.includes(type as ArtTypeId));
     });
     
-    console.log("Eventos filtrados:", filteredEvents);
-    
     filteredEvents.forEach(event => {
       if (!event.longitude || !event.latitude) return;
       
-      let markerColor = '#9b87f5';
+      let markerColor = '#000000';
       
       if (event.art_types && event.art_types.length > 0) {
         const firstTypeId = Object.entries(artTypeMapping).find(
@@ -112,19 +113,18 @@ export const MapContainer = ({
       
       const el = document.createElement('div');
       el.className = 'event-marker';
+      el.style.backgroundImage = `url("data:image/svg+xml;charset=utf-8,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 0C7.58 0 4 3.58 4 8c0 5.25 8 13 8 13s8-7.75 8-13c0-4.42-3.58-8-8-8zm0 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z' fill='${encodeURIComponent(markerColor)}'/%3E%3C/svg%3E")`;
       el.style.width = '24px';
       el.style.height = '24px';
-      el.style.borderRadius = '50%';
-      el.style.backgroundColor = markerColor;
-      el.style.border = '2px solid white';
-      el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+      el.style.backgroundSize = 'cover';
+      el.style.cursor = 'pointer';
       
       const popup = new mapboxgl.Popup({ offset: 25 })
         .setHTML(`
           <div style="padding: 10px;">
             <h3 style="margin: 0 0 5px; font-weight: bold;">${event.title}</h3>
             <p style="margin: 0 0 8px;">${event.description?.substring(0, 100)}${event.description?.length > 100 ? '...' : ''}</p>
-            <a href="/events/${event.id}" target="_blank" style="color: #9b87f5; text-decoration: none; font-weight: bold;">Ver detalles</a>
+            <a href="/events/${event.id}" target="_blank" style="color: ${markerColor}; text-decoration: none; font-weight: bold;">Ver detalles</a>
           </div>
         `);
       
