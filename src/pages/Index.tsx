@@ -11,9 +11,7 @@ const Index = () => {
               <img src="/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png" alt="SeekArt Logo" className="h-60 w-auto mb-8 object-cover hover:scale-110 transition-transform duration-500" />
             </div>
             <p className="mt-6 leading-8 text-center text-2xl font-bold text-slate-900">EN BUSCA DEL ARTE </p>
-            <p className="mt-6 text-xl leading-8 text-sky-950 text-justify">EN BUSCA DEL ARTE 
-Descubre y conecta con artistas locales. 
-Encuentra eventos únicos cerca de ti.</p>
+            <p className="mt-6 text-xl leading-8 text-sky-950 text-center">Descubre y conecta con artistas locales. </p>
             <p className="mt-6 text-xl leading-8 text-sky-950 text-justify">EN BUSCA DEL ARTE 
 Descubre y conecta con artistas locales. 
 Encuentra eventos únicos cerca de ti.</p>
