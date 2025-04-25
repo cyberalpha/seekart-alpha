@@ -36,7 +36,7 @@ export const UserMenu = () => {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       
       if (session?.user) {
@@ -77,7 +77,20 @@ export const UserMenu = () => {
 
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
+      // First close the dropdown menu manually by clicking outside
+      const event = new MouseEvent('mousedown', {
+        bubbles: true,
+        cancelable: true,
+        view: window
+      });
+      document.dispatchEvent(event);
+      
+      // Then perform the sign out
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) throw error;
+      
+      // Navigate and show toast after successful sign out
       navigate("/");
       toast({
         title: "Sesión cerrada",
