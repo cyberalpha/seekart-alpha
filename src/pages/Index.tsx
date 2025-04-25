@@ -12,9 +12,7 @@ const Index = () => {
             </div>
             <p className="mt-6 leading-8 text-center text-2xl font-bold text-slate-900">EN BUSCA DEL ARTE </p>
             <p className="mt-6 text-xl leading-8 text-sky-950 text-center">Descubre y conecta con artistas locales. </p>
-            <p className="mt-6 text-xl leading-8 text-sky-950 text-justify">EN BUSCA DEL ARTE 
-Descubre y conecta con artistas locales. 
-Encuentra eventos únicos cerca de ti.</p>
+            <p className="mt-6 text-xl leading-8 text-sky-950 text-center">Encuentra eventos únicos cerca de ti.</p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a href="/auth" className="rounded-md bg-gradient-to-r from-seekart-green to-seekart-blue px-6 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105">
                 Comenzar ahora
