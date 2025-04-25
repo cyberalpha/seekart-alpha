@@ -16,11 +16,11 @@ export const EventFilters = ({
   const handleValueChange = (value: string[]) => {
     // Cast the string[] to ArtTypeId[]
     setSelectedTypes(value as ArtTypeId[]);
-    console.log("Nuevos filtros:", value);
+    console.log("Tipos seleccionados:", value);
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg border border-seekart-purple/10">
+    <div className="bg-white p-6 rounded-lg shadow-lg border border-seekart-purple/10 h-full">
       <div>
         <h3 className="font-medium text-gray-700 mb-3">Tipos de eventos</h3>
         <ToggleGroup 
@@ -32,12 +32,14 @@ export const EventFilters = ({
         >
           {artTypes.map((type) => {
             const Icon = type.icon;
+            const isSelected = selectedTypes.includes(type.id);
+            
             return (
               <ToggleGroupItem 
                 key={type.id} 
                 value={type.id}
                 className={`event-type-button event-type-button-${type.id} ${
-                  selectedTypes.includes(type.id) ? 'selected' : ''
+                  isSelected ? 'selected' : ''
                 }`}
                 aria-label={type.name}
               >

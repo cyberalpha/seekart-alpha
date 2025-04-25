@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -176,6 +177,11 @@
   color: white;
 }
 
+/* Fix for event filter buttons - ensure they don't change color when deselected */
+.event-type-button:not(.selected) {
+  background-color: transparent !important;
+}
+
 /* Estilos personalizados para marcadores de eventos */
 .event-marker {
   cursor: pointer;
@@ -184,4 +190,9 @@
 
 .event-marker:hover {
   transform: scale(1.2);
+}
+
+/* Gradient backgrounds for page sections */
+.art-gradient-bg {
+  @apply bg-gradient-to-br from-white via-seekart-blue/5 to-white;
 }

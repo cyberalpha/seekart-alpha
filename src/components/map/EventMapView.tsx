@@ -11,18 +11,22 @@ export const EventMapView = () => {
   const { userLocation, events, isLoading } = useLocationData();
 
   return (
-    <div className="flex flex-col h-[calc(100vh-14rem)] gap-4">
-      <MapContainer 
-        userLocation={userLocation}
-        events={events}
-        selectedTypes={selectedTypes}
-      />
+    <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-10rem)]">
+      <div className="flex-grow w-full md:w-3/4">
+        <MapContainer 
+          userLocation={userLocation}
+          events={events}
+          selectedTypes={selectedTypes}
+        />
+      </div>
       
-      <EventFilters 
-        selectedTypes={selectedTypes}
-        setSelectedTypes={setSelectedTypes}
-        artTypes={artTypes}
-      />
+      <div className="w-full md:w-1/4">
+        <EventFilters 
+          selectedTypes={selectedTypes}
+          setSelectedTypes={setSelectedTypes}
+          artTypes={artTypes}
+        />
+      </div>
     </div>
   );
 };

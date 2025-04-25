@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import {
   NavigationMenu,
@@ -38,7 +39,7 @@ export const NavLinks = () => {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="flex items-center gap-1 text-sm font-medium text-gray-700">
+          <NavigationMenuTrigger className="flex items-center gap-1 text-sm font-medium text-gray-700 data-[state=open]:bg-gray-100">
             <Users size={16} />
             <span>Explorar</span>
           </NavigationMenuTrigger>

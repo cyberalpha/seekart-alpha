@@ -17,14 +17,14 @@ const PaymentMethods = () => {
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
-      <Card>
-        <CardHeader>
+      <Card className="shadow-md hover:shadow-lg transition-all border-seekart-blue/10">
+        <CardHeader className="bg-gradient-to-r from-seekart-blue/5 to-white">
           <CardTitle>Mercado Pago y PayPal</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6">
           <div className="space-y-2">
             <h3 className="font-medium">Mercado Pago</h3>
-            <Button className="w-full"
+            <Button className="w-full bg-gradient-to-r from-seekart-blue to-seekart-green hover:opacity-90"
                onClick={() => window.open("https://mpago.la/166iWvu", "_blank")}
               >Donar</Button>
             <p className="text-sm text-muted-foreground">
@@ -33,7 +33,7 @@ const PaymentMethods = () => {
           </div>
           <div className="space-y-2">
             <h3 className="font-medium">PayPal</h3>
-            <Button className="w-full" 
+            <Button className="w-full bg-gradient-to-r from-seekart-blue to-seekart-purple hover:opacity-90" 
             onClick={() => window.open("https://www.paypal.com/paypalme/cristophelico", "_blank")}
               >
               Donar
@@ -45,11 +45,11 @@ const PaymentMethods = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="shadow-md hover:shadow-lg transition-all border-seekart-green/10">
+        <CardHeader className="bg-gradient-to-r from-seekart-green/5 to-white">
           <CardTitle>Transferencia Bancaria</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6">
           <div className="space-y-2">
             <h3 className="font-medium">Cuenta Bancaria Argentina</h3>
             <div className="space-y-1 text-sm">
@@ -64,26 +64,26 @@ const PaymentMethods = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="shadow-md hover:shadow-lg transition-all border-seekart-orange/10">
+        <CardHeader className="bg-gradient-to-r from-seekart-orange/5 to-white">
           <CardTitle>Tarjeta de Crédito</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6">
           <p className="text-sm text-muted-foreground">
             Realiza tu donación de forma rápida y segura utilizando tu tarjeta de crédito.
           </p>
-          <Button className="w-full">Donar con Tarjeta</Button>
+          <Button className="w-full bg-gradient-to-r from-seekart-orange to-seekart-red hover:opacity-90">Donar con Tarjeta</Button>
           <p className="text-sm text-muted-foreground">
             Te redirigiremos a una pasarela de pago segura para completar tu transacción.
           </p>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="shadow-md hover:shadow-lg transition-all border-seekart-purple/10">
+        <CardHeader className="bg-gradient-to-r from-seekart-purple/5 to-white">
           <CardTitle>Criptomonedas</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6">
           {[
             { name: "USDT (Tether)", address: "0x850ed63ae1f72902543bc665311fe95e19a02c8f" },
             { name: "USD Coin (USDC)", address: "0x850ed63ae1f72902543bc665311fe95e19a02c8f" },
@@ -96,6 +96,7 @@ const PaymentMethods = () => {
                 <Button
                   variant="outline"
                   size="icon"
+                  className="border-seekart-purple/20 hover:bg-seekart-purple/10 hover:border-seekart-purple/30"
                   onClick={() => handleCopyToClipboard(crypto.address, crypto.name)}
                 >
                   <Copy className="h-4 w-4" />
@@ -113,7 +114,7 @@ const PaymentMethods = () => {
               0x5B015aE60Fe3CdAe53eead9aaC0c500b8298126D
             </code>
             <Button
-              className="w-full"
+              className="w-full bg-gradient-to-r from-seekart-red to-seekart-purple hover:opacity-90"
               onClick={() => window.open("https://pancakeswap.finance/swap?inputCurrency=0x55d398326f99059fF775485246999027B3197955&outputCurrency=0x5B015aE60Fe3CdAe53eead9aaC0c500b8298126D", "_blank")}
             >
               Comprar XTOF

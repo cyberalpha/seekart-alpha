@@ -1,9 +1,11 @@
+
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Loader2 } from "lucide-react";
 import { MAPBOX_PUBLIC_TOKEN } from '@/config/tokens';
-import { ArtTypeId, EventMarker, MapEvent, markerColors, artTypeMapping } from "./types";
+import { ArtTypeId, EventMarker, MapEvent, markerColors } from "./types";
+import { artTypeMapping } from "./types";
 
 interface MapContainerProps {
   userLocation: [number, number] | null;
@@ -40,12 +42,18 @@ export const MapContainer = ({
       newMap.addControl(new mapboxgl.NavigationControl(), 'top-right');
       map.current = newMap;
 
+      // Create custom current location marker (classic black marker)
       const el = document.createElement('div');
       el.className = 'location-marker';
-      el.style.backgroundImage = 'url("data:image/svg+xml;charset=utf-8,%3Csvg width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M12 0C7.58 0 4 3.58 4 8c0 5.25 8 13 8 13s8-7.75 8-13c0-4.42-3.58-8-8-8zm0 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z\' fill=\'%23000000\'/%3E%3C/svg%3E")';
-      el.style.width = '24px';
-      el.style.height = '24px';
-      el.style.backgroundSize = 'cover';
+      el.innerHTML = `
+        <svg width="36" height="48" viewBox="0 0 36 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 0C8.064 0 0 8.064 0 18C0 23.964 8.568 35.532 15.444 44.1C16.776 45.78 19.224 45.78 20.556 44.1C27.432 35.532 36 23.964 36 18C36 8.064 27.936 0 18 0ZM18 24C14.688 24 12 21.312 12 18C12 14.688 14.688 12 18 12C21.312 12 24 14.688 24 18C24 21.312 21.312 24 18 24Z" fill="black"/>
+        </svg>
+      `;
+      el.style.width = '36px';
+      el.style.height = '48px';
+      el.style.marginTop = '-48px';
+      el.style.marginLeft = '-18px';
 
       userMarker.current = new mapboxgl.Marker({ element: el })
         .setLngLat(userLocation)
@@ -113,13 +121,21 @@ export const MapContainer = ({
       
       const el = document.createElement('div');
       el.className = 'event-marker';
-      el.style.backgroundImage = `url("data:image/svg+xml;charset=utf-8,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 0C7.58 0 4 3.58 4 8c0 5.25 8 13 8 13s8-7.75 8-13c0-4.42-3.58-8-8-8zm0 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z' fill='${encodeURIComponent(markerColor)}'/%3E%3C/svg%3E")`;
-      el.style.width = '24px';
-      el.style.height = '24px';
-      el.style.backgroundSize = 'cover';
+      
+      // Create pin-shape SVG for event markers
+      el.innerHTML = `
+        <svg width="36" height="48" viewBox="0 0 36 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 0C8.064 0 0 8.064 0 18C0 23.964 8.568 35.532 15.444 44.1C16.776 45.78 19.224 45.78 20.556 44.1C27.432 35.532 36 23.964 36 18C36 8.064 27.936 0 18 0ZM18 24C14.688 24 12 21.312 12 18C12 14.688 14.688 12 18 12C21.312 12 24 14.688 24 18C24 21.312 21.312 24 18 24Z" fill="${markerColor}"/>
+        </svg>
+      `;
+      
+      el.style.width = '36px';
+      el.style.height = '48px';
+      el.style.marginTop = '-48px';
+      el.style.marginLeft = '-18px';
       el.style.cursor = 'pointer';
       
-      const popup = new mapboxgl.Popup({ offset: 25 })
+      const popup = new mapboxgl.Popup({ offset: [0, -40] })
         .setHTML(`
           <div style="padding: 10px;">
             <h3 style="margin: 0 0 5px; font-weight: bold;">${event.title}</h3>
@@ -138,7 +154,7 @@ export const MapContainer = ({
   };
 
   return (
-    <div className="flex-1 relative rounded-lg overflow-hidden shadow-lg bg-gradient-to-br from-slate-100 to-slate-200">
+    <div className="flex-1 relative rounded-lg overflow-hidden shadow-lg bg-gradient-to-br from-slate-100 to-slate-200 h-full">
       <div 
         ref={mapContainer} 
         id="map" 
