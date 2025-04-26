@@ -204,6 +204,13 @@ const EditEvent = () => {
     );
   }
 
+  // Convert numeric latitude and longitude to strings for the form
+  const formattedEventData: Partial<EventFormData> = {
+    ...eventData,
+    latitude: eventData.latitude.toString(),
+    longitude: eventData.longitude.toString()
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
       <Navbar />
@@ -212,7 +219,7 @@ const EditEvent = () => {
         <h1 className="mb-8 text-3xl font-bold text-gray-900">Editar Evento</h1>
         
         <EventForm
-          initialData={eventData}
+          initialData={formattedEventData}
           onSubmit={handleSubmit}
           submitButtonText="Guardar cambios"
           onCancel={() => navigate("/artist-profile")}

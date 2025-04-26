@@ -12,8 +12,8 @@ export type EventFormData = {
   ticket_url: string;
   video_url: string;
   image_url: string;
-  latitude: string;
-  longitude: string;
+  latitude: string;  // Keeping as string for form input compatibility
+  longitude: string; // Keeping as string for form input compatibility
 };
 
 export type EventFormProps = {
