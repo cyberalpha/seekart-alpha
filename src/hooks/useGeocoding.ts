@@ -5,12 +5,12 @@ import { MAPBOX_PUBLIC_TOKEN } from '@/config/tokens';
 export const useGeocoding = () => {
   const [loading, setLoading] = useState(false);
 
-  const getCoordinates = async (address: string, city: string, locality: string) => {
+  const getCoordinates = async (address: string, city: string, country: string) => {
     try {
       setLoading(true);
       
       // Construct search query
-      const searchQuery = [address, city, locality]
+      const searchQuery = [address, city, country]
         .filter(Boolean)
         .join(', ');
       
