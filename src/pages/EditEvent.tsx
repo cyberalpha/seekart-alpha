@@ -16,7 +16,10 @@ type EventData = {
   date: string;
   address: string | null;
   city: string | null;
-  cross_streets: string | null;
+  state: string | null;
+  country: string | null;
+  cross_street_1: string | null;
+  cross_street_2: string | null;
   locality: string | null;
   type: string;
   art_types?: string[];

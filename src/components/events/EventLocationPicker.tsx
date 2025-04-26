@@ -70,7 +70,8 @@ export const EventLocationPicker = ({
         toast({
           title: "Ubicación actualizada",
           description: `Precisión: ${Math.round(result.precision * 100)}%`,
-          variant: result.precision > 0.8 ? "default" : "warning"
+          // Fix: replace "warning" variant with "destructive" for low precision
+          variant: result.precision > 0.8 ? "default" : "destructive"
         });
       }
     }
