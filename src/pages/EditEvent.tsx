@@ -7,35 +7,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { EventForm } from "@/components/events/EventForm";
 import { useEventSubmit } from "@/hooks/useEventSubmit";
 import { useImageUpload } from "@/hooks/useImageUpload";
-import type { EventFormData } from "@/types/event";
-
-type EventData = {
-  id: string;
-  title: string;
-  description: string | null;
-  date: string;
-  address: string | null;
-  city: string | null;
-  state: string | null;
-  country: string | null;
-  cross_street_1: string | null;
-  cross_street_2: string | null;
-  locality: string | null;
-  type: string;
-  art_types?: string[];
-  ticket_url: string | null;
-  video_url: string | null;
-  image_url: string;
-  latitude: number;
-  longitude: number;
-  artist_id: string;
-  created_at: string;
-};
+import { EventType, EventFormData } from "@/types/event";
 
 const EditEvent = () => {
   const { eventId } = useParams();
   const [loading, setLoading] = useState(true);
-  const [eventData, setEventData] = useState<EventData | null>(null);
+  const [eventData, setEventData] = useState<EventType | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { handleSubmit, loading: submitLoading } = useEventSubmit(eventId);
@@ -59,7 +36,7 @@ const EditEvent = () => {
         
         if (error) throw error;
         
-        const eventData = data as EventData;
+        const eventData = data as EventType;
         
         if (eventData.artist_id !== session.user.id) {
           navigate("/artist-profile");

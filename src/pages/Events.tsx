@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -8,9 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { SocialShare } from "@/components/social/SocialShare";
+import { EventType } from "@/types/event";
 
 const Events = () => {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -44,7 +46,7 @@ const Events = () => {
     fetchEvents();
   }, [toast]);
 
-  const renderArtistCard = (event: Event) => (
+  const renderArtistCard = (event: EventType) => (
     <Card key={event.id} className="overflow-hidden">
       <div className="relative aspect-video overflow-hidden">
         <img

@@ -27,3 +27,33 @@ export type EventFormProps = {
   loading: boolean;
   uploading: boolean;
 };
+
+export type EventType = {
+  id: string;
+  title: string;
+  description: string | null;
+  date: string;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
+  cross_street_1: string | null;
+  cross_street_2: string | null;
+  locality: string | null;
+  type: string;
+  art_types: string[] | null;
+  ticket_url: string | null;
+  video_url: string | null;
+  image_url: string;
+  latitude: number;
+  longitude: number;
+  artist_id: string;
+  created_at: string;
+  updated_at: string;
+  followers?: number;
+  follower_count?: number;
+  artists?: {
+    name: string;
+    profile_image: string | null;
+  };
+};

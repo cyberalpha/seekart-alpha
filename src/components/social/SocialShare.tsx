@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { Facebook, Instagram, Twitter, Link } from "lucide-react";
+import { Facebook, Instagram, Twitter, Link, Share2 } from "lucide-react";
 
 interface SocialShareProps {
   url: string;
@@ -48,6 +48,7 @@ export const SocialShare = ({ url, title }: SocialShareProps) => {
         size="icon"
         className="bg-[#1877F2] text-white hover:bg-[#1877F2]/90"
         onClick={() => handleShare('facebook')}
+        title="Compartir en Facebook"
       >
         <Facebook className="h-4 w-4" />
       </Button>
@@ -57,6 +58,7 @@ export const SocialShare = ({ url, title }: SocialShareProps) => {
         size="icon"
         className="bg-gradient-to-br from-[#E4405F] to-[#FFDC80] text-white hover:opacity-90"
         onClick={() => handleShare('instagram')}
+        title="Compartir en Instagram"
       >
         <Instagram className="h-4 w-4" />
       </Button>
@@ -66,8 +68,19 @@ export const SocialShare = ({ url, title }: SocialShareProps) => {
         size="icon"
         className="bg-[#1DA1F2] text-white hover:bg-[#1DA1F2]/90"
         onClick={() => handleShare('twitter')}
+        title="Compartir en Twitter"
       >
         <Twitter className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="outline"
+        size="icon"
+        className="bg-[#25D366] text-white hover:bg-[#25D366]/90"
+        onClick={() => handleShare('whatsapp')}
+        title="Compartir en WhatsApp"
+      >
+        <Share2 className="h-4 w-4" />
       </Button>
       
       <Button
@@ -75,6 +88,7 @@ export const SocialShare = ({ url, title }: SocialShareProps) => {
         size="icon"
         onClick={copyLink}
         className="bg-gray-500 text-white hover:bg-gray-600"
+        title="Copiar enlace"
       >
         <Link className="h-4 w-4" />
       </Button>

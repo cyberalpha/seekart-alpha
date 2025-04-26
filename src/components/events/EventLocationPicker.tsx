@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LocationPickerMap } from "@/components/map/LocationPickerMap";
 import { useGeocoding } from "@/hooks/useGeocoding";
 import { useToast } from "@/components/ui/use-toast";
+import { MAPBOX_PUBLIC_TOKEN } from "@/config/tokens";
 
 interface EventLocationPickerProps {
   address: string;
