@@ -1,15 +1,15 @@
 
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { artTypes } from "@/pages/ArtistProfile";
+import { EventFormProps } from "@/types/event";
 import { EventImageUploader } from "./EventImageUploader";
 import { EventLocationPicker } from "./EventLocationPicker";
-import { EventFormData, EventFormProps } from "@/types/event";
+import { EventBasicInfo } from "./EventBasicInfo";
+import { EventLinks } from "./EventLinks";
+import { useEventForm } from "@/hooks/useEventForm";
 
 export const EventForm = ({ 
   initialData = {},
@@ -19,51 +19,11 @@ export const EventForm = ({
   loading,
   uploading
 }: EventFormProps) => {
-  const [title, setTitle] = useState(initialData.title || "");
-  const [description, setDescription] = useState(initialData.description || "");
-  const [date, setDate] = useState(initialData.date || "");
-  const [address, setAddress] = useState(initialData.address || "");
-  const [city, setCity] = useState(initialData.city || "");
-  const [crossStreets, setCrossStreets] = useState(initialData.cross_streets || "");
-  const [locality, setLocality] = useState(initialData.locality || "");
-  const [selectedArtTypes, setSelectedArtTypes] = useState<string[]>(initialData.art_types || []);
-  const [ticketUrl, setTicketUrl] = useState(initialData.ticket_url || "");
-  const [videoUrl, setVideoUrl] = useState(initialData.video_url || "");
-  const [imageUrl, setImageUrl] = useState(initialData.image_url || "");
-  const [latitude, setLatitude] = useState(initialData.latitude || "");
-  const [longitude, setLongitude] = useState(initialData.longitude || "");
-
-  const handleToggleArtType = (typeId: string) => {
-    setSelectedArtTypes(prev => {
-      if (prev.includes(typeId)) {
-        return prev.filter(id => id !== typeId);
-      } else {
-        return [...prev, typeId];
-      }
-    });
-  };
-
+  const { formState, formSetters } = useEventForm(initialData);
+  
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const formData: EventFormData = {
-      title,
-      description,
-      date,
-      address,
-      city,
-      cross_streets: crossStreets,
-      locality,
-      type: selectedArtTypes[0] || "",
-      art_types: selectedArtTypes,
-      ticket_url: ticketUrl,
-      video_url: videoUrl,
-      image_url: imageUrl,
-      latitude,
-      longitude
-    };
-
-    await onSubmit(formData);
+    await onSubmit(formState);
   };
 
   return (
@@ -74,108 +34,73 @@ export const EventForm = ({
       
       <CardContent>
         <form onSubmit={handleFormSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="title">Título del evento *</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
+          <EventBasicInfo
+            title={formState.title}
+            setTitle={formSetters.setTitle}
+            description={formState.description}
+            setDescription={formSetters.setDescription}
+            date={formState.date}
+            setDate={formSetters.setDate}
+          />
+          
+          <div>
+            <Label>Tipo de arte *</Label>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {artTypes.map(type => (
+                <Badge 
+                  key={type.id}
+                  className={`cursor-pointer ${
+                    formState.art_types.includes(type.id) 
+                      ? type.color + ' text-white' 
+                      : 'bg-gray-200 text-gray-700'
+                  }`}
+                  onClick={() => {
+                    formSetters.setSelectedArtTypes(prev => {
+                      if (prev.includes(type.id)) {
+                        return prev.filter(id => id !== type.id);
+                      } else {
+                        return [...prev, type.id];
+                      }
+                    });
+                  }}
+                >
+                  {type.name}
+                </Badge>
+              ))}
             </div>
-            
-            <div>
-              <Label htmlFor="description">Descripción</Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={4}
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="date">Fecha y hora *</Label>
-              <Input
-                id="date"
-                type="datetime-local"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                required
-              />
-            </div>
-            
-            <div>
-              <Label>Tipo de arte *</Label>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {artTypes.map(type => (
-                  <Badge 
-                    key={type.id}
-                    className={`cursor-pointer ${
-                      selectedArtTypes.includes(type.id) 
-                        ? type.color + ' text-white' 
-                        : 'bg-gray-200 text-gray-700'
-                    }`}
-                    onClick={() => handleToggleArtType(type.id)}
-                  >
-                    {type.name}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-            
-            <EventLocationPicker
-              address={address}
-              setAddress={setAddress}
-              city={city}
-              setCity={setCity}
-              crossStreets={crossStreets}
-              setCrossStreets={setCrossStreets}
-              locality={locality}
-              setLocality={setLocality}
-              latitude={latitude}
-              setLatitude={setLatitude}
-              longitude={longitude}
-              setLongitude={setLongitude}
-            />
-            
-            <div className="space-y-4">
-              <Label>Enlaces opcionales</Label>
-              
-              <div>
-                <Label htmlFor="ticketUrl">Enlace para comprar boletos</Label>
-                <Input
-                  id="ticketUrl"
-                  type="url"
-                  value={ticketUrl}
-                  onChange={(e) => setTicketUrl(e.target.value)}
-                  placeholder="https://..."
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="videoUrl">Enlace de video</Label>
-                <Input
-                  id="videoUrl"
-                  type="url"
-                  value={videoUrl}
-                  onChange={(e) => setVideoUrl(e.target.value)}
-                  placeholder="https://youtube.com/..."
-                />
-              </div>
-            </div>
-            
-            <EventImageUploader
-              imageUrl={imageUrl}
-              onImageUpload={async (e) => {
-                if (e.target.files?.[0]) {
-                  setImageUrl(URL.createObjectURL(e.target.files[0]));
-                }
-              }}
-              uploading={uploading}
-            />
           </div>
+          
+          <EventLocationPicker
+            address={formState.address}
+            setAddress={formSetters.setAddress}
+            city={formState.city}
+            setCity={formSetters.setCity}
+            crossStreets={formState.cross_streets}
+            setCrossStreets={formSetters.setCrossStreets}
+            locality={formState.locality}
+            setLocality={formSetters.setLocality}
+            latitude={formState.latitude}
+            setLatitude={formSetters.setLatitude}
+            longitude={formState.longitude}
+            setLongitude={formSetters.setLongitude}
+          />
+          
+          <EventLinks
+            ticketUrl={formState.ticket_url}
+            setTicketUrl={formSetters.setTicketUrl}
+            videoUrl={formState.video_url}
+            setVideoUrl={formSetters.setVideoUrl}
+          />
+          
+          <EventImageUploader
+            imageUrl={formState.image_url}
+            onImageUpload={async (e) => {
+              if (e.target.files?.[0]) {
+                formSetters.setImageUrl(URL.createObjectURL(e.target.files[0]));
+              }
+            }}
+            uploading={uploading}
+          />
           
           <div className="flex justify-end space-x-4">
             <Button
