@@ -1,3 +1,4 @@
+
 export type EventFormData = {
   title: string;
   description: string;
@@ -6,7 +7,8 @@ export type EventFormData = {
   city: string;
   state: string;
   country: string;
-  cross_streets: string;
+  cross_street_1: string;
+  cross_street_2: string;
   locality: string;
   type: string;
   art_types: string[];

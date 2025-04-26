@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -79,8 +78,10 @@ export const EventForm = ({
             setState={formSetters.setState}
             country={formState.country}
             setCountry={formSetters.setCountry}
-            crossStreets={formState.cross_streets}
-            setCrossStreets={formSetters.setCrossStreets}
+            cross_street_1={formState.cross_street_1}
+            setCrossStreet1={formSetters.setCrossStreet1}
+            cross_street_2={formState.cross_street_2}
+            setCrossStreet2={formSetters.setCrossStreet2}
             locality={formState.locality}
             setLocality={formSetters.setLocality}
             latitude={formState.latitude}

@@ -10,7 +10,8 @@ export const useEventForm = (initialData: Partial<EventFormData> = {}) => {
   const [city, setCity] = useState(initialData.city || "");
   const [state, setState] = useState(initialData.state || "");
   const [country, setCountry] = useState(initialData.country || "");
-  const [crossStreets, setCrossStreets] = useState(initialData.cross_streets || "");
+  const [crossStreet1, setCrossStreet1] = useState(initialData.cross_street_1 || "");
+  const [crossStreet2, setCrossStreet2] = useState(initialData.cross_street_2 || "");
   const [locality, setLocality] = useState(initialData.locality || "");
   const [selectedArtTypes, setSelectedArtTypes] = useState<string[]>(initialData.art_types || []);
   const [ticketUrl, setTicketUrl] = useState(initialData.ticket_url || "");
@@ -27,7 +28,8 @@ export const useEventForm = (initialData: Partial<EventFormData> = {}) => {
     city,
     state,
     country,
-    cross_streets: crossStreets,
+    cross_street_1: crossStreet1,
+    cross_street_2: crossStreet2,
     locality,
     type: selectedArtTypes[0] || "",
     art_types: selectedArtTypes,
@@ -46,7 +48,8 @@ export const useEventForm = (initialData: Partial<EventFormData> = {}) => {
     setCity,
     setState,
     setCountry,
-    setCrossStreets,
+    setCrossStreet1,
+    setCrossStreet2,
     setLocality,
     setSelectedArtTypes,
     setTicketUrl,

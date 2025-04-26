@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { LocationPickerMap } from "@/components/map/LocationPickerMap";
 import { useGeocoding } from "@/hooks/useGeocoding";
 import { useToast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 interface EventLocationPickerProps {
   address: string;
@@ -16,8 +17,10 @@ interface EventLocationPickerProps {
   setState: (value: string) => void;
   country: string;
   setCountry: (value: string) => void;
-  crossStreets: string;
-  setCrossStreets: (value: string) => void;
+  cross_street_1: string;
+  setCrossStreet1: (value: string) => void;
+  cross_street_2: string;
+  setCrossStreet2: (value: string) => void;
   locality: string;
   setLocality: (value: string) => void;
   latitude: string;
@@ -35,8 +38,10 @@ export const EventLocationPicker = ({
   setState,
   country,
   setCountry,
-  crossStreets,
-  setCrossStreets,
+  cross_street_1,
+  setCrossStreet1,
+  cross_street_2,
+  setCrossStreet2,
   locality,
   setLocality,
   latitude,
@@ -45,20 +50,35 @@ export const EventLocationPicker = ({
   setLongitude,
 }: EventLocationPickerProps) => {
   const { toast } = useToast();
-  const { getCoordinates } = useGeocoding();
+  const { getCoordinates, loading } = useGeocoding();
 
-  const handleAddressChange = async () => {
+  const handleUpdateLocation = async () => {
     if (address && city && country) {
-      const coordinates = await getCoordinates(address, city, country);
-      if (coordinates) {
-        setLatitude(coordinates.latitude.toString());
-        setLongitude(coordinates.longitude.toString());
+      const result = await getCoordinates(
+        address,
+        city,
+        state,
+        country,
+        locality,
+        cross_street_1,
+        cross_street_2
+      );
+
+      if (result) {
+        setLatitude(result.latitude.toString());
+        setLongitude(result.longitude.toString());
         toast({
           title: "Ubicación actualizada",
-          description: "Las coordenadas se han actualizado según la dirección proporcionada.",
+          description: `Precisión: ${Math.round(result.precision * 100)}%`,
+          variant: result.precision > 0.8 ? "default" : "warning"
         });
       }
     }
+  };
+
+  const handleAddressChange = async (value: string, setter: (value: string) => void) => {
+    setter(value);
+    await handleUpdateLocation();
   };
 
   const handleGetCurrentLocation = () => {
@@ -81,12 +101,6 @@ export const EventLocationPicker = ({
           });
         }
       );
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Navegador no compatible",
-        description: "Tu navegador no soporta geolocalización. Intenta ingresar la ubicación manualmente.",
-      });
     }
   };
 
@@ -100,13 +114,9 @@ export const EventLocationPicker = ({
           <Input
             id="address"
             value={address}
-            onChange={(e) => {
-              setAddress(e.target.value);
-              if (e.target.value && city && country) {
-                handleAddressChange();
-              }
-            }}
+            onChange={(e) => handleAddressChange(e.target.value, setAddress)}
             className="w-full"
+            placeholder="Ej: Av. Principal 123"
           />
         </div>
         
@@ -115,13 +125,9 @@ export const EventLocationPicker = ({
           <Input
             id="city"
             value={city}
-            onChange={(e) => {
-              setCity(e.target.value);
-              if (address && e.target.value && country) {
-                handleAddressChange();
-              }
-            }}
+            onChange={(e) => handleAddressChange(e.target.value, setCity)}
             className="w-full"
+            placeholder="Ej: Buenos Aires"
           />
         </div>
 
@@ -130,8 +136,9 @@ export const EventLocationPicker = ({
           <Input
             id="state"
             value={state}
-            onChange={(e) => setState(e.target.value)}
+            onChange={(e) => handleAddressChange(e.target.value, setState)}
             className="w-full"
+            placeholder="Ej: Buenos Aires"
           />
         </div>
 
@@ -140,35 +147,44 @@ export const EventLocationPicker = ({
           <Input
             id="country"
             value={country}
-            onChange={(e) => {
-              setCountry(e.target.value);
-              if (address && city && e.target.value) {
-                handleAddressChange();
-              }
-            }}
+            onChange={(e) => handleAddressChange(e.target.value, setCountry)}
             className="w-full"
+            placeholder="Ej: Argentina"
           />
         </div>
       </div>
       
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <Label htmlFor="crossStreets">Calles de referencia</Label>
+          <Label htmlFor="crossStreet1">Primera calle de referencia</Label>
           <Input
-            id="crossStreets"
-            value={crossStreets}
-            onChange={(e) => setCrossStreets(e.target.value)}
+            id="crossStreet1"
+            value={cross_street_1}
+            onChange={(e) => handleAddressChange(e.target.value, setCrossStreet1)}
             className="w-full"
+            placeholder="Ej: Calle 1"
           />
         </div>
         
         <div>
-          <Label htmlFor="locality">Localidad</Label>
+          <Label htmlFor="crossStreet2">Segunda calle de referencia</Label>
+          <Input
+            id="crossStreet2"
+            value={cross_street_2}
+            onChange={(e) => handleAddressChange(e.target.value, setCrossStreet2)}
+            className="w-full"
+            placeholder="Ej: Calle 2"
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <Label htmlFor="locality">Localidad/Barrio</Label>
           <Input
             id="locality"
             value={locality}
-            onChange={(e) => setLocality(e.target.value)}
+            onChange={(e) => handleAddressChange(e.target.value, setLocality)}
             className="w-full"
+            placeholder="Ej: Palermo"
           />
         </div>
       </div>
@@ -190,6 +206,7 @@ export const EventLocationPicker = ({
         variant="outline"
         onClick={handleGetCurrentLocation}
         className="flex items-center gap-2"
+        disabled={loading}
       >
         <MapPin size={16} />
         <span>Obtener ubicación actual</span>

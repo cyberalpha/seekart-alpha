@@ -59,7 +59,8 @@ export type Database = {
           city: string | null
           country: string | null
           created_at: string
-          cross_streets: string | null
+          cross_street_1: string | null
+          cross_street_2: string | null
           date: string
           description: string | null
           id: string
@@ -81,7 +82,8 @@ export type Database = {
           city?: string | null
           country?: string | null
           created_at?: string
-          cross_streets?: string | null
+          cross_street_1?: string | null
+          cross_street_2?: string | null
           date: string
           description?: string | null
           id?: string
@@ -103,7 +105,8 @@ export type Database = {
           city?: string | null
           country?: string | null
           created_at?: string
-          cross_streets?: string | null
+          cross_street_1?: string | null
+          cross_street_2?: string | null
           date?: string
           description?: string | null
           id?: string
