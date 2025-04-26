@@ -6,8 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import type { Event } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { SocialShare } from "@/components/social/SocialShare";
 
 const Events = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -44,6 +44,77 @@ const Events = () => {
     fetchEvents();
   }, [toast]);
 
+  const renderArtistCard = (event: Event) => (
+    <Card key={event.id} className="overflow-hidden">
+      <div className="relative aspect-video overflow-hidden">
+        <img
+          src={event.image_url}
+          alt={event.title}
+          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+        />
+      </div>
+      
+      <CardContent className="p-4">
+        <h3 className="mb-2 text-xl font-bold">{event.title}</h3>
+        
+        <p className="mb-2 text-sm text-gray-600">
+          {format(new Date(event.date), "dd/MM/yyyy HH:mm")}
+        </p>
+        
+        <div className="mb-3 flex flex-wrap gap-2">
+          {event.art_types && event.art_types.map((type, index) => {
+            let color = "";
+            switch (type) {
+              case "musica": color = "bg-[#2ecc71] text-white"; break;
+              case "teatro": color = "bg-[#f1c40f] text-white"; break;
+              case "imagenes": color = "bg-[#e74c3c] text-white"; break;
+              case "letras": color = "bg-[#3498db] text-white"; break;
+              case "cine": color = "bg-[#e67e22] text-white"; break;
+              default: color = "bg-[#9b59b6] text-white";
+            }
+            
+            const typeName = {
+              "musica": "Música",
+              "teatro": "Teatro",
+              "imagenes": "Imágenes y formas",
+              "letras": "Letras",
+              "cine": "Cine",
+              "otro": "Otro"
+            }[type] || type;
+            
+            return (
+              <Badge key={index} className={color}>
+                {typeName}
+              </Badge>
+            );
+          })}
+        </div>
+        
+        <p className="mb-4 line-clamp-2 text-sm text-gray-600">
+          {event.description}
+        </p>
+        
+        <Button 
+          className="w-full"
+          onClick={() => navigate(`/events/${event.id}`)}
+        >
+          Ver detalles
+        </Button>
+        
+        <div className="mt-4 flex justify-between items-center">
+          <div className="text-sm text-gray-500">
+            {event.follower_count || 0} seguidores
+          </div>
+          
+          <SocialShare
+            url={`${window.location.origin}/events/${event.id}`}
+            title={event.title}
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
       <Navbar />
@@ -59,65 +130,7 @@ const Events = () => {
           </p>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {events.map((event) => (
-              <Card key={event.id} className="overflow-hidden">
-                <div className="relative aspect-video overflow-hidden">
-                  <img
-                    src={event.image_url}
-                    alt={event.title}
-                    className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                </div>
-                
-                <CardContent className="p-4">
-                  <h3 className="mb-2 text-xl font-bold">{event.title}</h3>
-                  
-                  <p className="mb-2 text-sm text-gray-600">
-                    {format(new Date(event.date), "dd/MM/yyyy HH:mm")}
-                  </p>
-                  
-                  <div className="mb-3 flex flex-wrap gap-2">
-                    {event.art_types && event.art_types.map((type, index) => {
-                      let color = "";
-                      switch (type) {
-                        case "musica": color = "bg-[#2ecc71] text-white"; break;
-                        case "teatro": color = "bg-[#f1c40f] text-white"; break;
-                        case "imagenes": color = "bg-[#e74c3c] text-white"; break;
-                        case "letras": color = "bg-[#3498db] text-white"; break;
-                        case "cine": color = "bg-[#e67e22] text-white"; break;
-                        default: color = "bg-[#9b59b6] text-white";
-                      }
-                      
-                      const typeName = {
-                        "musica": "Música",
-                        "teatro": "Teatro",
-                        "imagenes": "Imágenes y formas",
-                        "letras": "Letras",
-                        "cine": "Cine",
-                        "otro": "Otro"
-                      }[type] || type;
-                      
-                      return (
-                        <Badge key={index} className={color}>
-                          {typeName}
-                        </Badge>
-                      );
-                    })}
-                  </div>
-                  
-                  <p className="mb-4 line-clamp-2 text-sm text-gray-600">
-                    {event.description}
-                  </p>
-                  
-                  <Button 
-                    className="w-full"
-                    onClick={() => navigate(`/events/${event.id}`)}
-                  >
-                    Ver detalles
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+            {events.map((event) => renderArtistCard(event))}
           </div>
         )}
       </div>

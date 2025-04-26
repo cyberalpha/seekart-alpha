@@ -1,4 +1,3 @@
-
 import { MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { LocationPickerMap } from "@/components/map/LocationPickerMap";
 import { useGeocoding } from "@/hooks/useGeocoding";
 import { useToast } from "@/components/ui/use-toast";
-import { Badge } from "@/components/ui/badge";
 
 interface EventLocationPickerProps {
   address: string;
@@ -70,7 +68,6 @@ export const EventLocationPicker = ({
         toast({
           title: "Ubicación actualizada",
           description: `Precisión: ${Math.round(result.precision * 100)}%`,
-          // Fix: replace "warning" variant with "destructive" for low precision
           variant: result.precision > 0.8 ? "default" : "destructive"
         });
       }
@@ -102,6 +99,41 @@ export const EventLocationPicker = ({
           });
         }
       );
+    }
+  };
+
+  const handleMapLocationSelect = async (lat: string, lng: string) => {
+    setLatitude(lat);
+    setLongitude(lng);
+    
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_PUBLIC_TOKEN}`
+    );
+    
+    const data = await response.json();
+    
+    if (data.features && data.features.length > 0) {
+      const location = data.features[0];
+      const context = location.context || [];
+      
+      const addressParts = {
+        address: location.address ? `${location.address} ${location.text}` : location.text,
+        city: context.find((c: any) => c.id.startsWith('place.'))?.text || '',
+        state: context.find((c: any) => c.id.startsWith('region.'))?.text || '',
+        country: context.find((c: any) => c.id.startsWith('country.'))?.text || '',
+        locality: context.find((c: any) => c.id.startsWith('neighborhood.'))?.text || '',
+      };
+      
+      setAddress(addressParts.address);
+      setCity(addressParts.city);
+      setState(addressParts.state);
+      setCountry(addressParts.country);
+      setLocality(addressParts.locality);
+      
+      toast({
+        title: "Ubicación seleccionada",
+        description: "Los campos de dirección han sido actualizados.",
+      });
     }
   };
 
@@ -195,22 +227,19 @@ export const EventLocationPicker = ({
         <LocationPickerMap
           latitude={latitude}
           longitude={longitude}
-          onLocationChange={(lat, lng) => {
-            setLatitude(lat);
-            setLongitude(lng);
-          }}
+          onLocationChange={handleMapLocationSelect}
         />
       </div>
       
       <Button
         type="button"
         variant="outline"
-        onClick={handleGetCurrentLocation}
+        onClick={() => handleMapLocationSelect(latitude, longitude)}
         className="flex items-center gap-2"
         disabled={loading}
       >
         <MapPin size={16} />
-        <span>Obtener ubicación actual</span>
+        <span>Seleccionar ubicación en el mapa</span>
       </Button>
     </div>
   );
