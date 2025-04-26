@@ -57,6 +57,7 @@ export type Database = {
           art_types: string[] | null
           artist_id: string
           city: string | null
+          country: string | null
           created_at: string
           cross_streets: string | null
           date: string
@@ -66,6 +67,7 @@ export type Database = {
           latitude: number
           locality: string | null
           longitude: number
+          state: string | null
           ticket_url: string | null
           title: string
           type: string
@@ -77,6 +79,7 @@ export type Database = {
           art_types?: string[] | null
           artist_id: string
           city?: string | null
+          country?: string | null
           created_at?: string
           cross_streets?: string | null
           date: string
@@ -86,6 +89,7 @@ export type Database = {
           latitude: number
           locality?: string | null
           longitude: number
+          state?: string | null
           ticket_url?: string | null
           title: string
           type: string
@@ -97,6 +101,7 @@ export type Database = {
           art_types?: string[] | null
           artist_id?: string
           city?: string | null
+          country?: string | null
           created_at?: string
           cross_streets?: string | null
           date?: string
@@ -106,6 +111,7 @@ export type Database = {
           latitude?: number
           locality?: string | null
           longitude?: number
+          state?: string | null
           ticket_url?: string | null
           title?: string
           type?: string

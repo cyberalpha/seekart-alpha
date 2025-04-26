@@ -1,10 +1,11 @@
-
 export type EventFormData = {
   title: string;
   description: string;
   date: string;
   address: string;
   city: string;
+  state: string;
+  country: string;
   cross_streets: string;
   locality: string;
   type: string;
@@ -12,8 +13,8 @@ export type EventFormData = {
   ticket_url: string;
   video_url: string;
   image_url: string;
-  latitude: string;  // Keeping as string for form input compatibility
-  longitude: string; // Keeping as string for form input compatibility
+  latitude: string;
+  longitude: string;
 };
 
 export type EventFormProps = {

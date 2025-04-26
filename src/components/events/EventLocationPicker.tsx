@@ -12,6 +12,10 @@ interface EventLocationPickerProps {
   setAddress: (value: string) => void;
   city: string;
   setCity: (value: string) => void;
+  state: string;
+  setState: (value: string) => void;
+  country: string;
+  setCountry: (value: string) => void;
   crossStreets: string;
   setCrossStreets: (value: string) => void;
   locality: string;
@@ -27,6 +31,10 @@ export const EventLocationPicker = ({
   setAddress,
   city,
   setCity,
+  state,
+  setState,
+  country,
+  setCountry,
   crossStreets,
   setCrossStreets,
   locality,
@@ -40,16 +48,16 @@ export const EventLocationPicker = ({
   const { getCoordinates } = useGeocoding();
 
   const handleAddressChange = async () => {
-    const coordinates = await getCoordinates(address, city, locality);
-    
-    if (coordinates) {
-      setLatitude(coordinates.latitude.toString());
-      setLongitude(coordinates.longitude.toString());
-      
-      toast({
-        title: "Ubicación actualizada",
-        description: "Las coordenadas se han actualizado según la dirección proporcionada.",
-      });
+    if (address && city && country) {
+      const coordinates = await getCoordinates(address, city, country);
+      if (coordinates) {
+        setLatitude(coordinates.latitude.toString());
+        setLongitude(coordinates.longitude.toString());
+        toast({
+          title: "Ubicación actualizada",
+          description: "Las coordenadas se han actualizado según la dirección proporcionada.",
+        });
+      }
     }
   };
 
@@ -59,7 +67,6 @@ export const EventLocationPicker = ({
         (position) => {
           setLatitude(position.coords.latitude.toString());
           setLongitude(position.coords.longitude.toString());
-          
           toast({
             title: "Ubicación obtenida",
             description: "Se ha obtenido tu ubicación actual.",
@@ -87,7 +94,7 @@ export const EventLocationPicker = ({
     <div className="space-y-4">
       <Label>Ubicación</Label>
       
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <Label htmlFor="address">Dirección</Label>
           <Input
@@ -95,10 +102,11 @@ export const EventLocationPicker = ({
             value={address}
             onChange={(e) => {
               setAddress(e.target.value);
-              if (e.target.value && city) {
+              if (e.target.value && city && country) {
                 handleAddressChange();
               }
             }}
+            className="w-full"
           />
         </div>
         
@@ -109,21 +117,48 @@ export const EventLocationPicker = ({
             value={city}
             onChange={(e) => {
               setCity(e.target.value);
-              if (address && e.target.value) {
+              if (address && e.target.value && country) {
                 handleAddressChange();
               }
             }}
+            className="w-full"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="state">Estado/Provincia</Label>
+          <Input
+            id="state"
+            value={state}
+            onChange={(e) => setState(e.target.value)}
+            className="w-full"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="country">País</Label>
+          <Input
+            id="country"
+            value={country}
+            onChange={(e) => {
+              setCountry(e.target.value);
+              if (address && city && e.target.value) {
+                handleAddressChange();
+              }
+            }}
+            className="w-full"
           />
         </div>
       </div>
       
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <Label htmlFor="crossStreets">Calles de referencia</Label>
           <Input
             id="crossStreets"
             value={crossStreets}
             onChange={(e) => setCrossStreets(e.target.value)}
+            className="w-full"
           />
         </div>
         
@@ -132,12 +167,8 @@ export const EventLocationPicker = ({
           <Input
             id="locality"
             value={locality}
-            onChange={(e) => {
-              setLocality(e.target.value);
-              if (address && city && e.target.value) {
-                handleAddressChange();
-              }
-            }}
+            onChange={(e) => setLocality(e.target.value)}
+            className="w-full"
           />
         </div>
       </div>
