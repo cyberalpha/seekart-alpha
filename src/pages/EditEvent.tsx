@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +11,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { Upload, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { artTypes } from "./ArtistProfile";
+import { LocationPickerMap } from "@/components/map/LocationPickerMap";
+import { useGeocoding } from "@/hooks/useGeocoding";
 
 type EventData = {
   id: string;
@@ -53,6 +54,8 @@ const EditEvent = () => {
   const [longitude, setLongitude] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const { getCoordinates, loading: geocodingLoading } = useGeocoding();
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -203,6 +206,20 @@ const EditEvent = () => {
         return [...prev, typeId];
       }
     });
+  };
+
+  const handleAddressChange = async () => {
+    const coordinates = await getCoordinates(address, city, locality);
+    
+    if (coordinates) {
+      setLatitude(coordinates.latitude.toString());
+      setLongitude(coordinates.longitude.toString());
+      
+      toast({
+        title: "Ubicación actualizada",
+        description: "Las coordenadas se han actualizado según la dirección proporcionada.",
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -383,7 +400,12 @@ const EditEvent = () => {
                       <Input
                         id="address"
                         value={address}
-                        onChange={(e) => setAddress(e.target.value)}
+                        onChange={(e) => {
+                          setAddress(e.target.value);
+                          if (e.target.value && city) {
+                            handleAddressChange();
+                          }
+                        }}
                       />
                     </div>
                     
@@ -392,7 +414,12 @@ const EditEvent = () => {
                       <Input
                         id="city"
                         value={city}
-                        onChange={(e) => setCity(e.target.value)}
+                        onChange={(e) => {
+                          setCity(e.target.value);
+                          if (address && e.target.value) {
+                            handleAddressChange();
+                          }
+                        }}
                       />
                     </div>
                   </div>
@@ -412,31 +439,26 @@ const EditEvent = () => {
                       <Input
                         id="locality"
                         value={locality}
-                        onChange={(e) => setLocality(e.target.value)}
+                        onChange={(e) => {
+                          setLocality(e.target.value);
+                          if (address && city && e.target.value) {
+                            handleAddressChange();
+                          }
+                        }}
                       />
                     </div>
                   </div>
                   
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div>
-                      <Label htmlFor="latitude">Latitud *</Label>
-                      <Input
-                        id="latitude"
-                        value={latitude}
-                        onChange={(e) => setLatitude(e.target.value)}
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="longitude">Longitud *</Label>
-                      <Input
-                        id="longitude"
-                        value={longitude}
-                        onChange={(e) => setLongitude(e.target.value)}
-                        required
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label>Vista previa de la ubicación</Label>
+                    <LocationPickerMap
+                      latitude={latitude}
+                      longitude={longitude}
+                      onLocationChange={(lat, lng) => {
+                        setLatitude(lat);
+                        setLongitude(lng);
+                      }}
+                    />
                   </div>
                   
                   <Button
