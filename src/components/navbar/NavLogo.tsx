@@ -1,7 +1,6 @@
 
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -9,9 +8,13 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { NavLinks } from "./NavLinks";
+import { Menu } from "lucide-react";
 
 export const NavLogo = () => {
   const isMobile = useIsMobile();
+
+  // Verificar que estamos en móvil antes de renderizar
+  console.log('Estado móvil en NavLogo:', isMobile);
 
   if (isMobile) {
     return (
@@ -24,6 +27,7 @@ export const NavLogo = () => {
               className="h-10 w-auto"
             />
             <span className="text-xl font-bold text-[#1A1F2C]">SeekArt</span>
+            <Menu className="ml-2 h-6 w-6 md:hidden" />
           </button>
         </SheetTrigger>
         <SheetContent 
@@ -48,6 +52,7 @@ export const NavLogo = () => {
     );
   }
 
+  // Versión desktop
   return (
     <Link to="/" className="flex items-center space-x-2">
       <img
