@@ -7,22 +7,21 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { 
   Home, 
   Map, 
   Users, 
   Calendar, 
   Heart, 
-  Cog,
+  Cog, 
   Menu 
 } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 
 export const NavLinks = () => {
   const isMobile = useIsMobile();
@@ -56,23 +55,26 @@ export const NavLinks = () => {
 
   if (isMobile) {
     return (
-      <Sheet>
-        <SheetTrigger asChild>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
           <button className="p-2 hover:bg-gray-100 rounded-md">
             <Menu size={24} />
           </button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-[240px] sm:w-[280px]">
-          <SheetHeader>
-            <SheetTitle>Menú</SheetTitle>
-          </SheetHeader>
-          <div className="py-4">
-            <NavigationMenu className="w-full">
-              {renderLinks()}
-            </NavigationMenu>
-          </div>
-        </SheetContent>
-      </Sheet>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          {links.map(({ to, icon: Icon, label, color }) => (
+            <DropdownMenuItem key={to} asChild>
+              <Link
+                to={to}
+                className="flex items-center gap-2 px-2 py-2"
+              >
+                <Icon size={16} color={color} />
+                <span>{label}</span>
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     );
   }
 

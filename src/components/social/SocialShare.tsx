@@ -13,15 +13,25 @@ export const SocialShare = ({ url, title }: SocialShareProps) => {
     const encodedUrl = encodeURIComponent(url);
     const encodedTitle = encodeURIComponent(title);
     
-    const shareUrls = {
+    const shareUrls: { [key: string]: string } = {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
       twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
-      instagram: `https://www.instagram.com/?url=${encodedUrl}`,
       whatsapp: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`
     };
     
+    if (platform === 'instagram') {
+      // Para Instagram, copiamos el enlace y mostramos instrucciones
+      navigator.clipboard.writeText(url).then(() => {
+        toast({
+          title: "Enlace copiado",
+          description: "Pega este enlace en tu historia de Instagram o en tu biografía.",
+        });
+      });
+      return;
+    }
+    
     if (platform in shareUrls) {
-      window.open(shareUrls[platform as keyof typeof shareUrls], '_blank');
+      window.open(shareUrls[platform], '_blank');
     }
   };
 
