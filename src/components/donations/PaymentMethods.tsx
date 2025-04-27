@@ -17,8 +17,8 @@ const PaymentMethods = () => {
   };
 
   return (
-    <div className={`grid gap-6 ${isMobile ? '' : 'md:grid-cols-2'}`}>
-      <Card className="shadow-md hover:shadow-lg transition-all border-seekart-blue/10">
+    <div className={`grid gap-4 ${isMobile ? 'px-2' : ''} md:gap-6 ${isMobile ? '' : 'md:grid-cols-2'}`}>
+      <Card className="w-full transform scale-97 shadow-md hover:shadow-lg transition-all border-seekart-blue/10">
         <CardHeader className="bg-gradient-to-r from-seekart-blue/5 to-white">
           <CardTitle>Mercado Pago y PayPal</CardTitle>
         </CardHeader>

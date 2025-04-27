@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase, Artist } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -9,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRound, Search, Heart, HeartOff } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { navigate } from "react-router-dom";
 
 const Artists = () => {
   const [artists, setArtists] = useState<Artist[]>([]);
@@ -38,7 +38,6 @@ const Artists = () => {
       try {
         setLoading(true);
         
-        // Fetch all artists
         const { data: artistsData, error: artistsError } = await supabase
           .from("artists")
           .select("*")
@@ -48,7 +47,6 @@ const Artists = () => {
         
         let followedIds: string[] = [];
         
-        // If user is logged in and is a fan, fetch followed artists
         if (userId && userType === "fan") {
           const { data: followsData, error: followsError } = await supabase
             .from("follows")
@@ -60,14 +58,10 @@ const Artists = () => {
           followedIds = followsData?.map(follow => follow.artist_id) || [];
         }
         
-        // Mark which artists the user is following and ensure follower_count is handled
         const artistsWithFollowStatus = artistsData?.map(artist => {
-          // Create a new object with the artist properties
           return {
             ...artist,
-            // Add follower_count property (default to 0)
             follower_count: 0,
-            // Add isFollowing property
             isFollowing: followedIds.includes(artist.id)
           };
         }) || [];
@@ -107,7 +101,6 @@ const Artists = () => {
         return;
       }
       
-      // Create follow relationship
       const { error } = await supabase
         .from("follows")
         .insert({
@@ -117,7 +110,6 @@ const Artists = () => {
       
       if (error) throw error;
       
-      // Update local state
       const updatedArtists = artists.map(artist => 
         artist.id === artistId 
           ? { 
@@ -149,7 +141,6 @@ const Artists = () => {
     try {
       if (!userId) return;
       
-      // Remove follow relationship
       const { error } = await supabase
         .from("follows")
         .delete()
@@ -158,7 +149,6 @@ const Artists = () => {
       
       if (error) throw error;
       
-      // Update local state
       const updatedArtists = artists.map(artist => 
         artist.id === artistId 
           ? { 
@@ -213,7 +203,7 @@ const Artists = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => window.location.href = `/artist/${artist.id}`}
+                onClick={() => navigate(`/artist/${artist.id}`)}
                 className="text-[#9b87f5] hover:text-[#8a76e4] hover:bg-[#9b87f5]/10"
               >
                 Ver perfil

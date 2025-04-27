@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -43,14 +44,22 @@ const Events = () => {
           .order('date');
         
         if (selectedTypes.length > 0) {
-          query = query.contains('art_types', selectedTypes);
+          const artTypeMapping: { [key: string]: string } = {
+            'music': 'musica',
+            'theater': 'teatro',
+            'visual': 'imagenes',
+            'literature': 'letras',
+            'cinema': 'cine',
+            'other': 'otro'
+          };
+
+          const mappedTypes = selectedTypes.map(type => artTypeMapping[type] || type);
+          query = query.contains('art_types', mappedTypes);
         }
         
         const { data, error } = await query;
         
-        if (error) {
-          throw error;
-        }
+        if (error) throw error;
         
         setEvents(data || []);
       } catch (error) {
