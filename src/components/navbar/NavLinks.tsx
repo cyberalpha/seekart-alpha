@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -22,7 +23,11 @@ import {
   Menu 
 } from "lucide-react";
 
-export const NavLinks = () => {
+interface NavLinksProps {
+  inMobileDropdown?: boolean;
+}
+
+export const NavLinks = ({ inMobileDropdown = false }: NavLinksProps) => {
   const isMobile = useIsMobile();
 
   const links = [
@@ -52,6 +57,26 @@ export const NavLinks = () => {
     </NavigationMenuList>
   );
 
+  // Si estamos dentro del dropdown móvil, renderizar solo los links directamente
+  if (inMobileDropdown) {
+    return (
+      <>
+        {links.map(({ to, icon: Icon, label, color }) => (
+          <DropdownMenuItem key={to} asChild>
+            <Link
+              to={to}
+              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              <Icon size={16} color={color} />
+              <span>{label}</span>
+            </Link>
+          </DropdownMenuItem>
+        ))}
+      </>
+    );
+  }
+
+  // Si no estamos en el dropdown móvil pero estamos en móvil, mostrar el botón de menú
   if (isMobile) {
     return (
       <DropdownMenu>
@@ -82,6 +107,7 @@ export const NavLinks = () => {
     );
   }
 
+  // Versión desktop
   return (
     <NavigationMenu>
       {renderLinks()}

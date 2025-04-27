@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import { MAPBOX_PUBLIC_TOKEN } from '@/config/tokens';
-import debounce from 'lodash/debounce';
 
 export const useGeocoding = () => {
   const [loading, setLoading] = useState(false);
@@ -18,27 +17,42 @@ export const useGeocoding = () => {
     try {
       setLoading(true);
       
-      // Construct detailed search query
-      const locationParts = [
-        address,
-        crossStreet1 && crossStreet2 ? `between ${crossStreet1} and ${crossStreet2}` : '',
-        locality,
-        city,
-        state,
-        country
-      ].filter(Boolean);
+      // Construir la consulta de búsqueda basada en los datos disponibles
+      // Comenzamos con el país como mínimo requerido
+      let locationParts: string[] = [];
+      
+      // Añadimos partes disponibles en orden jerárquico
+      if (address) locationParts.push(address);
+      if (locality) locationParts.push(locality);
+      if (city) locationParts.push(city);
+      if (state) locationParts.push(state);
+      if (country) locationParts.push(country);
+      
+      // Añadimos calles de referencia si ambas están disponibles
+      if (crossStreet1 && crossStreet2) {
+        locationParts.splice(1, 0, `between ${crossStreet1} and ${crossStreet2}`);
+      }
       
       const searchQuery = locationParts.join(', ');
       
-      if (!searchQuery) return null;
+      if (!searchQuery) {
+        setLoading(false);
+        return null;
+      }
 
-      // Add additional parameters for better precision
+      // Ajustamos los tipos de búsqueda según el nivel de detalle
+      let types = 'country';
+      if (state) types = 'region';
+      if (city) types = 'place';
+      if (address || locality) types = 'address,neighborhood,poi';
+
+      // Solicitud de geocodificación 
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?` + 
         new URLSearchParams({
           access_token: MAPBOX_PUBLIC_TOKEN,
           limit: '1',
-          types: 'address',
+          types: types,
           autocomplete: 'false'
         })
       );
@@ -60,8 +74,5 @@ export const useGeocoding = () => {
     }
   };
 
-  // Debounce the geocoding function to prevent too many API calls
-  const debouncedGetCoordinates = debounce(getCoordinates, 1000);
-
-  return { getCoordinates: debouncedGetCoordinates, loading };
+  return { getCoordinates, loading };
 };

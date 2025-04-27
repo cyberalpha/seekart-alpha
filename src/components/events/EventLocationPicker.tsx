@@ -1,3 +1,4 @@
+
 import { MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,6 +7,7 @@ import { LocationPickerMap } from "@/components/map/LocationPickerMap";
 import { useGeocoding } from "@/hooks/useGeocoding";
 import { useToast } from "@/components/ui/use-toast";
 import { MAPBOX_PUBLIC_TOKEN } from "@/config/tokens";
+import { useEffect } from "react";
 
 interface EventLocationPickerProps {
   address: string;
@@ -51,8 +53,15 @@ export const EventLocationPicker = ({
   const { toast } = useToast();
   const { getCoordinates, loading } = useGeocoding();
 
+  // Manejar la actualización progresiva de la ubicación
+  useEffect(() => {
+    if (country) {
+      handleUpdateLocation();
+    }
+  }, [country, state, city, address]);
+
   const handleUpdateLocation = async () => {
-    if (address && city && country) {
+    if (country) {
       const result = await getCoordinates(
         address,
         city,
@@ -66,18 +75,17 @@ export const EventLocationPicker = ({
       if (result) {
         setLatitude(result.latitude.toString());
         setLongitude(result.longitude.toString());
-        toast({
-          title: "Ubicación actualizada",
-          description: `Precisión: ${Math.round(result.precision * 100)}%`,
-          variant: result.precision > 0.8 ? "default" : "destructive"
-        });
+        
+        // Solo mostrar toast cuando se actualiza con la dirección completa
+        if (address) {
+          toast({
+            title: "Ubicación actualizada",
+            description: `Precisión: ${Math.round(result.precision * 100)}%`,
+            variant: result.precision > 0.8 ? "default" : "destructive"
+          });
+        }
       }
     }
-  };
-
-  const handleAddressChange = async (value: string, setter: (value: string) => void) => {
-    setter(value);
-    await handleUpdateLocation();
   };
 
   const handleGetCurrentLocation = () => {
@@ -90,6 +98,9 @@ export const EventLocationPicker = ({
             title: "Ubicación obtenida",
             description: "Se ha obtenido tu ubicación actual.",
           });
+
+          // Realizar geocodificación inversa para obtener la dirección
+          handleReverseGeocode(position.coords.latitude.toString(), position.coords.longitude.toString());
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -106,34 +117,46 @@ export const EventLocationPicker = ({
   const handleMapLocationSelect = async (lat: string, lng: string) => {
     setLatitude(lat);
     setLongitude(lng);
-    
-    const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_PUBLIC_TOKEN}`
-    );
-    
-    const data = await response.json();
-    
-    if (data.features && data.features.length > 0) {
-      const location = data.features[0];
-      const context = location.context || [];
+    handleReverseGeocode(lat, lng);
+  };
+
+  const handleReverseGeocode = async (lat: string, lng: string) => {
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_PUBLIC_TOKEN}`
+      );
       
-      const addressParts = {
-        address: location.address ? `${location.address} ${location.text}` : location.text,
-        city: context.find((c: any) => c.id.startsWith('place.'))?.text || '',
-        state: context.find((c: any) => c.id.startsWith('region.'))?.text || '',
-        country: context.find((c: any) => c.id.startsWith('country.'))?.text || '',
-        locality: context.find((c: any) => c.id.startsWith('neighborhood.'))?.text || '',
-      };
+      const data = await response.json();
       
-      setAddress(addressParts.address);
-      setCity(addressParts.city);
-      setState(addressParts.state);
-      setCountry(addressParts.country);
-      setLocality(addressParts.locality);
-      
+      if (data.features && data.features.length > 0) {
+        const location = data.features[0];
+        const context = location.context || [];
+        
+        const addressParts = {
+          address: location.address ? `${location.address} ${location.text}` : location.text,
+          city: context.find((c: any) => c.id.startsWith('place.'))?.text || '',
+          state: context.find((c: any) => c.id.startsWith('region.'))?.text || '',
+          country: context.find((c: any) => c.id.startsWith('country.'))?.text || '',
+          locality: context.find((c: any) => c.id.startsWith('neighborhood.'))?.text || '',
+        };
+        
+        setCountry(addressParts.country);
+        setState(addressParts.state);
+        setCity(addressParts.city);
+        setAddress(addressParts.address);
+        setLocality(addressParts.locality);
+        
+        toast({
+          title: "Ubicación seleccionada",
+          description: "Los campos de dirección han sido actualizados.",
+        });
+      }
+    } catch (error) {
+      console.error("Error en geocodificación inversa:", error);
       toast({
-        title: "Ubicación seleccionada",
-        description: "Los campos de dirección han sido actualizados.",
+        variant: "destructive",
+        title: "Error de ubicación",
+        description: "No se pudo obtener la dirección desde el mapa."
       });
     }
   };
@@ -142,106 +165,134 @@ export const EventLocationPicker = ({
     <div className="space-y-4">
       <Label>Ubicación</Label>
       
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4">
+        {/* País - 1er nivel jerárquico */}
         <div>
-          <Label htmlFor="address">Dirección</Label>
+          <Label htmlFor="country" className="text-sm font-medium text-gray-700">País *</Label>
+          <Input
+            id="country"
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            className="w-full"
+            placeholder="Ej: Argentina"
+            required
+          />
+        </div>
+        
+        {/* Estado/Provincia - 2do nivel jerárquico */}
+        <div>
+          <Label htmlFor="state" className="text-sm font-medium text-gray-700">Estado/Provincia</Label>
+          <Input
+            id="state"
+            value={state}
+            onChange={(e) => setState(e.target.value)}
+            className="w-full"
+            placeholder="Ej: Buenos Aires"
+          />
+        </div>
+
+        {/* Ciudad - 3er nivel jerárquico */}
+        <div>
+          <Label htmlFor="city" className="text-sm font-medium text-gray-700">Ciudad</Label>
+          <Input
+            id="city"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="w-full"
+            placeholder="Ej: Buenos Aires"
+          />
+        </div>
+
+        {/* Dirección - 4to nivel jerárquico */}
+        <div>
+          <Label htmlFor="address" className="text-sm font-medium text-gray-700">Dirección</Label>
           <Input
             id="address"
             value={address}
-            onChange={(e) => handleAddressChange(e.target.value, setAddress)}
+            onChange={(e) => setAddress(e.target.value)}
             className="w-full"
             placeholder="Ej: Av. Principal 123"
           />
         </div>
         
+        {/* Localidad/Barrio - 5to nivel jerárquico */}
         <div>
-          <Label htmlFor="city">Ciudad</Label>
-          <Input
-            id="city"
-            value={city}
-            onChange={(e) => handleAddressChange(e.target.value, setCity)}
-            className="w-full"
-            placeholder="Ej: Buenos Aires"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="state">Estado/Provincia</Label>
-          <Input
-            id="state"
-            value={state}
-            onChange={(e) => handleAddressChange(e.target.value, setState)}
-            className="w-full"
-            placeholder="Ej: Buenos Aires"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="country">País</Label>
-          <Input
-            id="country"
-            value={country}
-            onChange={(e) => handleAddressChange(e.target.value, setCountry)}
-            className="w-full"
-            placeholder="Ej: Argentina"
-          />
-        </div>
-      </div>
-      
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <Label htmlFor="crossStreet1">Primera calle de referencia</Label>
-          <Input
-            id="crossStreet1"
-            value={cross_street_1}
-            onChange={(e) => handleAddressChange(e.target.value, setCrossStreet1)}
-            className="w-full"
-            placeholder="Ej: Calle 1"
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="crossStreet2">Segunda calle de referencia</Label>
-          <Input
-            id="crossStreet2"
-            value={cross_street_2}
-            onChange={(e) => handleAddressChange(e.target.value, setCrossStreet2)}
-            className="w-full"
-            placeholder="Ej: Calle 2"
-          />
-        </div>
-
-        <div className="sm:col-span-2">
-          <Label htmlFor="locality">Localidad/Barrio</Label>
+          <Label htmlFor="locality" className="text-sm font-medium text-gray-700">Localidad/Barrio</Label>
           <Input
             id="locality"
             value={locality}
-            onChange={(e) => handleAddressChange(e.target.value, setLocality)}
+            onChange={(e) => setLocality(e.target.value)}
             className="w-full"
             placeholder="Ej: Palermo"
           />
         </div>
+        
+        <div className="grid gap-4 sm:grid-cols-2">
+          {/* Primera referencia - 6to nivel jerárquico */}
+          <div>
+            <Label htmlFor="crossStreet1" className="text-sm font-medium text-gray-700">1ª Referencia</Label>
+            <Input
+              id="crossStreet1"
+              value={cross_street_1}
+              onChange={(e) => setCrossStreet1(e.target.value)}
+              className="w-full"
+              placeholder="Ej: Calle 1"
+            />
+          </div>
+          
+          {/* Segunda referencia - 7mo nivel jerárquico */}
+          <div>
+            <Label htmlFor="crossStreet2" className="text-sm font-medium text-gray-700">2ª Referencia</Label>
+            <Input
+              id="crossStreet2"
+              value={cross_street_2}
+              onChange={(e) => setCrossStreet2(e.target.value)}
+              className="w-full"
+              placeholder="Ej: Calle 2"
+            />
+          </div>
+        </div>
       </div>
       
-      <div className="space-y-2">
-        <Label>Vista previa de la ubicación</Label>
+      {/* Vista previa del mapa */}
+      <div className="space-y-2 mt-4">
+        <div className="flex items-center justify-between">
+          <Label>Vista previa de la ubicación</Label>
+          {loading && (
+            <span className="text-xs text-gray-500 animate-pulse">
+              Actualizando mapa...
+            </span>
+          )}
+        </div>
         <LocationPickerMap
-          latitude={latitude}
-          longitude={longitude}
+          latitude={latitude || "0"}
+          longitude={longitude || "0"}
           onLocationChange={handleMapLocationSelect}
         />
       </div>
-      
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => handleMapLocationSelect(latitude, longitude)}
-        className="flex items-center gap-2"
-        disabled={loading}
-      >
-        <MapPin size={16} />
-        <span>Seleccionar ubicación en el mapa</span>
-      </Button>
+
+      <div className="flex flex-wrap gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleGetCurrentLocation}
+          className="flex items-center gap-2"
+        >
+          <MapPin size={16} />
+          <span>Usar mi ubicación actual</span>
+        </Button>
+
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => handleUpdateLocation()}
+          disabled={!country || loading}
+          className="flex items-center gap-2"
+        >
+          <MapPin size={16} />
+          <span>Actualizar mapa desde dirección</span>
+        </Button>
+      </div>
     </div>
   );
 };
