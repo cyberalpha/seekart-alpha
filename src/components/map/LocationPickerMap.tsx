@@ -22,6 +22,22 @@ export const LocationPickerMap = ({
   const map = useRef<mapboxgl.Map | null>(null);
   const marker = useRef<mapboxgl.Marker | null>(null);
 
+  // Update map when coordinates change
+  useEffect(() => {
+    if (map.current && marker.current) {
+      const newLng = parseFloat(longitude);
+      const newLat = parseFloat(latitude);
+      
+      marker.current.setLngLat([newLng, newLat]);
+      map.current.flyTo({
+        center: [newLng, newLat],
+        zoom: 15,
+        duration: 2000
+      });
+    }
+  }, [latitude, longitude]);
+
+  // Initialize map
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
@@ -54,7 +70,7 @@ export const LocationPickerMap = ({
 
       // Add click handler for map
       newMap.on('click', (e) => {
-        if (selectionMode && marker.current) {
+        if (marker.current) {
           const { lng, lat } = e.lngLat;
           marker.current.setLngLat([lng, lat]);
           if (onLocationChange) {
@@ -75,13 +91,13 @@ export const LocationPickerMap = ({
       console.error('Error initializing map:', error);
       setLoading(false);
     }
-  }, [latitude, longitude, onLocationChange, selectionMode]);
+  }, [latitude, longitude, onLocationChange]);
 
   return (
     <div className="relative w-full h-[300px] rounded-lg overflow-hidden">
       <div 
         ref={mapContainer} 
-        className={`w-full h-full rounded-lg ${selectionMode ? 'cursor-crosshair' : ''}`}
+        className="w-full h-full rounded-lg cursor-pointer"
       />
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white/80">

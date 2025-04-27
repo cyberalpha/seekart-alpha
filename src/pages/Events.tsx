@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -10,12 +9,25 @@ import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { SocialShare } from "@/components/social/SocialShare";
 import { EventType } from "@/types/event";
+import { Plus } from "lucide-react";
 
 const Events = () => {
   const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isArtist, setIsArtist] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUserType = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setIsArtist(session.user.user_metadata?.user_type === 'artist');
+      }
+    };
+
+    checkUserType();
+  }, []);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -122,7 +134,19 @@ const Events = () => {
       <Navbar />
       
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <h1 className="mb-8 text-3xl font-bold text-gray-900">Explorar Eventos</h1>
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-gray-900">Explorar Eventos</h1>
+          
+          {isArtist && (
+            <Button
+              onClick={() => navigate("/create-event")}
+              className="bg-gradient-to-r from-[#2ecc71] to-[#3498db] hover:from-[#27ae60] hover:to-[#2980b9]"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Crear Evento
+            </Button>
+          )}
+        </div>
         
         {loading ? (
           <p className="text-center">Cargando eventos...</p>

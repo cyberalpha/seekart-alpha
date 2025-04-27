@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -61,12 +60,17 @@ export const NavLinks = () => {
             <Menu size={24} />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuContent
+          align="end"
+          side="bottom"
+          className="w-56 bg-white"
+          sideOffset={8}
+        >
           {links.map(({ to, icon: Icon, label, color }) => (
             <DropdownMenuItem key={to} asChild>
               <Link
                 to={to}
-                className="flex items-center gap-2 px-2 py-2"
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
                 <Icon size={16} color={color} />
                 <span>{label}</span>
