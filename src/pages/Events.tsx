@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,11 +10,15 @@ import { useNavigate } from "react-router-dom";
 import { SocialShare } from "@/components/social/SocialShare";
 import { EventType } from "@/types/event";
 import { Plus } from "lucide-react";
+import { EventFilters } from "@/components/map/EventFilters";
+import { artTypes } from "@/components/map/data";
+import { ArtTypeId } from "@/components/map/types";
 
 const Events = () => {
   const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(true);
   const [isArtist, setIsArtist] = useState(false);
+  const [selectedTypes, setSelectedTypes] = useState<ArtTypeId[]>([]);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -33,10 +37,16 @@ const Events = () => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const { data, error } = await supabase
+        let query = supabase
           .from('events')
           .select('*, artists(name, profile_image)')
           .order('date');
+        
+        if (selectedTypes.length > 0) {
+          query = query.contains('art_types', selectedTypes);
+        }
+        
+        const { data, error } = await query;
         
         if (error) {
           throw error;
@@ -56,7 +66,7 @@ const Events = () => {
     };
 
     fetchEvents();
-  }, [toast]);
+  }, [toast, selectedTypes]);
 
   const renderArtistCard = (event: EventType) => (
     <Card key={event.id} className="overflow-hidden">
@@ -146,6 +156,14 @@ const Events = () => {
               Crear Evento
             </Button>
           )}
+        </div>
+
+        <div className="mb-6">
+          <EventFilters
+            selectedTypes={selectedTypes}
+            setSelectedTypes={setSelectedTypes}
+            artTypes={artTypes}
+          />
         </div>
         
         {loading ? (

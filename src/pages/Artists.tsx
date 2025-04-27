@@ -208,7 +208,17 @@ const Artists = () => {
           </Avatar>
           
           <div className="flex-1">
-            <h3 className="mb-1 text-xl font-bold">{artist.name}</h3>
+            <div className="mb-2 flex items-center justify-between">
+              <h3 className="text-xl font-bold">{artist.name}</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => window.location.href = `/artist/${artist.id}`}
+                className="text-[#9b87f5] hover:text-[#8a76e4] hover:bg-[#9b87f5]/10"
+              >
+                Ver perfil
+              </Button>
+            </div>
             
             <p className="mb-2 text-sm text-gray-600">
               {artist.description ? (
@@ -222,25 +232,37 @@ const Artists = () => {
             
             <div className="mb-4 flex flex-wrap gap-2">
               {artist.instagram_url && (
-                <a 
-                  href={artist.instagram_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-[#9b87f5] hover:text-[#8a76e4]"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="bg-gradient-to-r from-[#833AB4] to-[#E1306C] text-white hover:opacity-90"
                 >
-                  Instagram
-                </a>
+                  <a 
+                    href={artist.instagram_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    Instagram
+                  </a>
+                </Button>
               )}
               
               {artist.facebook_url && (
-                <a 
-                  href={artist.facebook_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-[#9b87f5] hover:text-[#8a76e4]"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="bg-[#1877F2] text-white hover:opacity-90"
                 >
-                  Facebook
-                </a>
+                  <a 
+                    href={artist.facebook_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    Facebook
+                  </a>
+                </Button>
               )}
             </div>
             
