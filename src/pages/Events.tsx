@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -53,7 +54,7 @@ const Events = () => {
           };
 
           const mappedTypes = selectedTypes.map(type => artTypeMapping[type] || type);
-          query = query.contains('art_types', mappedTypes);
+          query = query.overlaps('art_types', mappedTypes); // Cambiado de contains a overlaps
         }
         
         const { data, error } = await query;
