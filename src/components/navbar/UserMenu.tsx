@@ -12,13 +12,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Session } from "@supabase/supabase-js";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { UserRound } from "lucide-react";
 
 export const UserMenu = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [userType, setUserType] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -77,20 +78,18 @@ export const UserMenu = () => {
 
   const handleSignOut = async () => {
     try {
-      // First close the dropdown menu manually by clicking outside
-      const event = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-        view: window
-      });
-      document.dispatchEvent(event);
-      
-      // Then perform the sign out
+      setIsLoggingOut(true);
+
+      // Limpiar el estado local primero
+      setSession(null);
+      setUserType(null);
+      setProfileImage(null);
+
       const { error } = await supabase.auth.signOut();
       
       if (error) throw error;
-      
-      // Navigate and show toast after successful sign out
+
+      // Solo navegar y mostrar el toast después de un cierre de sesión exitoso
       navigate("/");
       toast({
         title: "Sesión cerrada",
@@ -103,6 +102,8 @@ export const UserMenu = () => {
         title: "Error",
         description: "No se pudo cerrar la sesión. Inténtalo de nuevo.",
       });
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -134,8 +135,11 @@ export const UserMenu = () => {
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleSignOut}>
-            Cerrar sesión
+          <DropdownMenuItem 
+            onClick={handleSignOut}
+            disabled={isLoggingOut}
+          >
+            {isLoggingOut ? "Cerrando sesión..." : "Cerrar sesión"}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

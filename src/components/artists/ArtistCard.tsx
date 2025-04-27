@@ -6,6 +6,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Artist } from "@/integrations/supabase/client";
 import { UserRound, Heart, HeartOff, Facebook, Instagram } from "lucide-react";
 
+// Mapeo de tipos de arte a colores de SeekArt
+const artTypeColors: { [key: string]: string } = {
+  "Música": "bg-seekart-green hover:bg-seekart-green/90",
+  "Teatro": "bg-seekart-yellow hover:bg-seekart-yellow/90",
+  "Visual": "bg-seekart-red hover:bg-seekart-red/90",
+  "Literatura": "bg-seekart-blue hover:bg-seekart-blue/90",
+  "Cine": "bg-seekart-orange hover:bg-seekart-orange/90",
+  "Otros": "bg-seekart-purple hover:bg-seekart-purple/90"
+};
+
 interface ArtistCardProps {
   artist: Artist;
   userType: string | null;
@@ -14,6 +24,11 @@ interface ArtistCardProps {
 }
 
 export const ArtistCard = ({ artist, userType, onFollow, onUnfollow }: ArtistCardProps) => {
+  // Función auxiliar para obtener el color del badge
+  const getBadgeColor = (artType: string) => {
+    return artTypeColors[artType] || "bg-seekart-purple hover:bg-seekart-purple/90";
+  };
+
   return (
     <Card key={artist.id} className="overflow-hidden">
       <CardContent className="p-6">
@@ -40,7 +55,10 @@ export const ArtistCard = ({ artist, userType, onFollow, onUnfollow }: ArtistCar
           {artist.art_types && artist.art_types.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {artist.art_types.map((type, index) => (
-                <Badge key={index} className="bg-[#9b87f5]">
+                <Badge 
+                  key={index} 
+                  className={`${getBadgeColor(type)} text-white`}
+                >
                   {type}
                 </Badge>
               ))}
