@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { UserRound, Upload, PlusCircle, Edit, Trash2, Facebook, Instagram, Link } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { PasswordChangeForm } from "@/components/profile/PasswordChangeForm";
 
 export const artTypes = [
   { id: "musica", name: "Música", color: "bg-[#2ecc71]" }, // Verde brillante
@@ -293,235 +294,246 @@ const ArtistProfile = () => {
           </TabsList>
           
           <TabsContent value="profile">
-            <Card>
-              <CardHeader>
-                <CardTitle>Información del Artista</CardTitle>
-              </CardHeader>
-              
-              <CardContent>
-                <div className="flex flex-col gap-8 md:flex-row">
-                  <div className="flex flex-col items-center space-y-4">
-                    <Avatar className="h-32 w-32">
-                      {profileImageUrl ? (
-                        <AvatarImage src={profileImageUrl} alt="Foto de perfil" />
-                      ) : (
-                        <AvatarFallback className="bg-[#e74c3c] text-white">
-                          <UserRound size={64} />
-                        </AvatarFallback>
-                      )}
-                    </Avatar>
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Información del Artista</CardTitle>
+                </CardHeader>
+                
+                <CardContent>
+                  <div className="flex flex-col gap-8 md:flex-row">
+                    <div className="flex flex-col items-center space-y-4">
+                      <Avatar className="h-32 w-32">
+                        {profileImageUrl ? (
+                          <AvatarImage src={profileImageUrl} alt="Foto de perfil" />
+                        ) : (
+                          <AvatarFallback className="bg-[#e74c3c] text-white">
+                            <UserRound size={64} />
+                          </AvatarFallback>
+                        )}
+                      </Avatar>
+                      
+                      <div>
+                        <Input
+                          id="profileImage"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          disabled={uploading || !editing}
+                          className="hidden"
+                        />
+                        {editing && (
+                          <Label
+                            htmlFor="profileImage"
+                            className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#3498db] px-4 py-2 text-sm font-medium text-white hover:bg-[#2980b9]"
+                          >
+                            <Upload size={16} />
+                            {uploading ? "Subiendo..." : "Cambiar foto"}
+                          </Label>
+                        )}
+                      </div>
+                    </div>
                     
-                    <div>
-                      <Input
-                        id="profileImage"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        disabled={uploading || !editing}
-                        className="hidden"
-                      />
-                      {editing && (
-                        <Label
-                          htmlFor="profileImage"
-                          className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#3498db] px-4 py-2 text-sm font-medium text-white hover:bg-[#2980b9]"
-                        >
-                          <Upload size={16} />
-                          {uploading ? "Subiendo..." : "Cambiar foto"}
-                        </Label>
+                    <div className="flex-1 space-y-4">
+                      {editing ? (
+                        <>
+                          <div className="grid gap-4 md:grid-cols-2">
+                            <div className="space-y-2">
+                              <Label htmlFor="name">Nombre artístico o denominación</Label>
+                              <Input
+                                id="name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="lastName">Apellido (opcional)</Label>
+                              <Input
+                                id="lastName"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="description">Descripción</Label>
+                            <Textarea
+                              id="description"
+                              value={description}
+                              onChange={(e) => setDescription(e.target.value)}
+                              rows={4}
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label>Tipo de arte</Label>
+                            <div className="flex flex-wrap gap-2">
+                              {artistTypes.map((type, index) => (
+                                <Badge 
+                                  key={type.id}
+                                  className={`cursor-pointer ${type.selected ? type.color + ' text-white' : 'bg-gray-200 text-gray-700'}`}
+                                  onClick={() => handleToggleArtType(index)}
+                                >
+                                  {type.name}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          <div className="grid gap-4 md:grid-cols-3">
+                            <div className="space-y-2">
+                              <Label htmlFor="facebookUrl">Facebook URL</Label>
+                              <Input
+                                id="facebookUrl"
+                                value={facebookUrl}
+                                onChange={(e) => setFacebookUrl(e.target.value)}
+                                placeholder="https://facebook.com/tu_perfil"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="instagramUrl">Instagram URL</Label>
+                              <Input
+                                id="instagramUrl"
+                                value={instagramUrl}
+                                onChange={(e) => setInstagramUrl(e.target.value)}
+                                placeholder="https://instagram.com/tu_perfil"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="linktreeUrl">Linktree URL</Label>
+                              <Input
+                                id="linktreeUrl"
+                                value={linktreeUrl}
+                                onChange={(e) => setLinktreeUrl(e.target.value)}
+                                placeholder="https://linktr.ee/tu_perfil"
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="flex justify-end space-x-4">
+                            <Button
+                              variant="outline"
+                              onClick={() => setEditing(false)}
+                              disabled={loading}
+                            >
+                              Cancelar
+                            </Button>
+                            
+                            <Button
+                              onClick={handleUpdateProfile}
+                              disabled={loading}
+                              className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]"
+                            >
+                              {loading ? "Guardando..." : "Guardar cambios"}
+                            </Button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="grid gap-4 md:grid-cols-2">
+                            <div>
+                              <p className="text-sm font-medium text-gray-500">Nombre artístico</p>
+                              <p className="text-lg font-medium">{name}</p>
+                            </div>
+                            
+                            {lastName && (
+                              <div>
+                                <p className="text-sm font-medium text-gray-500">Apellido</p>
+                                <p className="text-lg font-medium">{lastName}</p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div>
+                            <p className="text-sm font-medium text-gray-500">Descripción</p>
+                            <p className="text-base">{description}</p>
+                          </div>
+                          
+                          {artistTypes.some(type => type.selected) && (
+                            <div>
+                              <p className="text-sm font-medium text-gray-500 mb-2">Tipo de arte</p>
+                              <div className="flex flex-wrap gap-2">
+                                {artistTypes
+                                  .filter(type => type.selected)
+                                  .map(type => (
+                                    <Badge 
+                                      key={type.id}
+                                      className={`${type.color} text-white`}
+                                    >
+                                      {type.name}
+                                    </Badge>
+                                  ))
+                                }
+                              </div>
+                            </div>
+                          )}
+                          
+                          <div className="flex gap-4">
+                            {facebookUrl && (
+                              <a
+                                href={facebookUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#3498db] hover:text-[#2980b9]"
+                                aria-label="Facebook"
+                              >
+                                <Facebook size={24} />
+                              </a>
+                            )}
+                            
+                            {instagramUrl && (
+                              <a
+                                href={instagramUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#e74c3c] hover:text-[#c0392b]"
+                                aria-label="Instagram"
+                              >
+                                <Instagram size={24} />
+                              </a>
+                            )}
+                            
+                            {linktreeUrl && (
+                              <a
+                                href={linktreeUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#2ecc71] hover:text-[#27ae60]"
+                                aria-label="Linktree"
+                              >
+                                <Link size={24} />
+                              </a>
+                            )}
+                          </div>
+                          
+                          <div className="pt-4">
+                            <Button
+                              onClick={() => setEditing(true)}
+                              className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]"
+                            >
+                              Editar perfil
+                            </Button>
+                          </div>
+                        </>
                       )}
                     </div>
                   </div>
-                  
-                  <div className="flex-1 space-y-4">
-                    {editing ? (
-                      <>
-                        <div className="grid gap-4 md:grid-cols-2">
-                          <div className="space-y-2">
-                            <Label htmlFor="name">Nombre artístico o denominación</Label>
-                            <Input
-                              id="name"
-                              value={name}
-                              onChange={(e) => setName(e.target.value)}
-                            />
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label htmlFor="lastName">Apellido (opcional)</Label>
-                            <Input
-                              id="lastName"
-                              value={lastName}
-                              onChange={(e) => setLastName(e.target.value)}
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="description">Descripción</Label>
-                          <Textarea
-                            id="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            rows={4}
-                          />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label>Tipo de arte</Label>
-                          <div className="flex flex-wrap gap-2">
-                            {artistTypes.map((type, index) => (
-                              <Badge 
-                                key={type.id}
-                                className={`cursor-pointer ${type.selected ? type.color + ' text-white' : 'bg-gray-200 text-gray-700'}`}
-                                onClick={() => handleToggleArtType(index)}
-                              >
-                                {type.name}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                        
-                        <div className="grid gap-4 md:grid-cols-3">
-                          <div className="space-y-2">
-                            <Label htmlFor="facebookUrl">Facebook URL</Label>
-                            <Input
-                              id="facebookUrl"
-                              value={facebookUrl}
-                              onChange={(e) => setFacebookUrl(e.target.value)}
-                              placeholder="https://facebook.com/tu_perfil"
-                            />
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label htmlFor="instagramUrl">Instagram URL</Label>
-                            <Input
-                              id="instagramUrl"
-                              value={instagramUrl}
-                              onChange={(e) => setInstagramUrl(e.target.value)}
-                              placeholder="https://instagram.com/tu_perfil"
-                            />
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label htmlFor="linktreeUrl">Linktree URL</Label>
-                            <Input
-                              id="linktreeUrl"
-                              value={linktreeUrl}
-                              onChange={(e) => setLinktreeUrl(e.target.value)}
-                              placeholder="https://linktr.ee/tu_perfil"
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className="flex justify-end space-x-4">
-                          <Button
-                            variant="outline"
-                            onClick={() => setEditing(false)}
-                            disabled={loading}
-                          >
-                            Cancelar
-                          </Button>
-                          
-                          <Button
-                            onClick={handleUpdateProfile}
-                            disabled={loading}
-                            className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]"
-                          >
-                            {loading ? "Guardando..." : "Guardar cambios"}
-                          </Button>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="grid gap-4 md:grid-cols-2">
-                          <div>
-                            <p className="text-sm font-medium text-gray-500">Nombre artístico</p>
-                            <p className="text-lg font-medium">{name}</p>
-                          </div>
-                          
-                          {lastName && (
-                            <div>
-                              <p className="text-sm font-medium text-gray-500">Apellido</p>
-                              <p className="text-lg font-medium">{lastName}</p>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <div>
-                          <p className="text-sm font-medium text-gray-500">Descripción</p>
-                          <p className="text-base">{description}</p>
-                        </div>
-                        
-                        {artistTypes.some(type => type.selected) && (
-                          <div>
-                            <p className="text-sm font-medium text-gray-500 mb-2">Tipo de arte</p>
-                            <div className="flex flex-wrap gap-2">
-                              {artistTypes
-                                .filter(type => type.selected)
-                                .map(type => (
-                                  <Badge 
-                                    key={type.id}
-                                    className={`${type.color} text-white`}
-                                  >
-                                    {type.name}
-                                  </Badge>
-                                ))
-                              }
-                            </div>
-                          </div>
-                        )}
-                        
-                        <div className="flex gap-4">
-                          {facebookUrl && (
-                            <a
-                              href={facebookUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#3498db] hover:text-[#2980b9]"
-                              aria-label="Facebook"
-                            >
-                              <Facebook size={24} />
-                            </a>
-                          )}
-                          
-                          {instagramUrl && (
-                            <a
-                              href={instagramUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#e74c3c] hover:text-[#c0392b]"
-                              aria-label="Instagram"
-                            >
-                              <Instagram size={24} />
-                            </a>
-                          )}
-                          
-                          {linktreeUrl && (
-                            <a
-                              href={linktreeUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#2ecc71] hover:text-[#27ae60]"
-                              aria-label="Linktree"
-                            >
-                              <Link size={24} />
-                            </a>
-                          )}
-                        </div>
-                        
-                        <div className="pt-4">
-                          <Button
-                            onClick={() => setEditing(true)}
-                            className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]"
-                          >
-                            Editar perfil
-                          </Button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Cambiar Contraseña</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <PasswordChangeForm />
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
           
           <TabsContent value="events">

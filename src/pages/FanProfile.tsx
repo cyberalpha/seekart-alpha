@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { UserRound, Upload } from "lucide-react";
+import { PasswordChangeForm } from "@/components/profile/PasswordChangeForm";
 
 const FanProfile = () => {
   const [loading, setLoading] = useState(true);
@@ -185,114 +185,125 @@ const FanProfile = () => {
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <h1 className="mb-8 text-3xl font-bold text-gray-900">Mi Perfil</h1>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Información Personal</CardTitle>
-          </CardHeader>
-          
-          <CardContent>
-            <div className="flex flex-col gap-8 md:flex-row">
-              <div className="flex flex-col items-center space-y-4">
-                <Avatar className="h-32 w-32">
-                  {profileImageUrl ? (
-                    <AvatarImage src={profileImageUrl} alt="Foto de perfil" />
-                  ) : (
-                    <AvatarFallback className="bg-[#f1c40f] text-white">
-                      <UserRound size={64} />
-                    </AvatarFallback>
-                  )}
-                </Avatar>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Información Personal</CardTitle>
+            </CardHeader>
+            
+            <CardContent>
+              <div className="flex flex-col gap-8 md:flex-row">
+                <div className="flex flex-col items-center space-y-4">
+                  <Avatar className="h-32 w-32">
+                    {profileImageUrl ? (
+                      <AvatarImage src={profileImageUrl} alt="Foto de perfil" />
+                    ) : (
+                      <AvatarFallback className="bg-[#f1c40f] text-white">
+                        <UserRound size={64} />
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  
+                  <div>
+                    <Input
+                      id="profileImage"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      disabled={uploading || !editing}
+                      className="hidden"
+                    />
+                    {editing && (
+                      <Label
+                        htmlFor="profileImage"
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#3498db] px-4 py-2 text-sm font-medium text-white hover:bg-[#2980b9]"
+                      >
+                        <Upload size={16} />
+                        {uploading ? "Subiendo..." : "Cambiar foto"}
+                      </Label>
+                    )}
+                  </div>
+                </div>
                 
-                <div>
-                  <Input
-                    id="profileImage"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    disabled={uploading || !editing}
-                    className="hidden"
-                  />
-                  {editing && (
-                    <Label
-                      htmlFor="profileImage"
-                      className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#3498db] px-4 py-2 text-sm font-medium text-white hover:bg-[#2980b9]"
-                    >
-                      <Upload size={16} />
-                      {uploading ? "Subiendo..." : "Cambiar foto"}
-                    </Label>
+                <div className="flex-1 space-y-4">
+                  {editing ? (
+                    <>
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="name">Nombre</Label>
+                          <Input
+                            id="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="lastName">Apellido</Label>
+                          <Input
+                            id="lastName"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-end space-x-4">
+                        <Button
+                          variant="outline"
+                          onClick={() => setEditing(false)}
+                          disabled={loading}
+                        >
+                          Cancelar
+                        </Button>
+                        
+                        <Button
+                          onClick={handleUpdateProfile}
+                          disabled={loading}
+                          className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]"
+                        >
+                          {loading ? "Guardando..." : "Guardar cambios"}
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div>
+                          <p className="text-sm font-medium text-gray-500">Nombre</p>
+                          <p className="text-lg font-medium">{name}</p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-sm font-medium text-gray-500">Apellido</p>
+                          <p className="text-lg font-medium">{lastName}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="pt-4">
+                        <Button
+                          onClick={() => setEditing(true)}
+                          className="bg-gradient-to-r from-[#2ecc71] to-[#3498db] hover:from-[#27ae60] hover:to-[#2980b9]"
+                        >
+                          Editar perfil
+                        </Button>
+                      </div>
+                    </>
                   )}
                 </div>
               </div>
-              
-              <div className="flex-1 space-y-4">
-                {editing ? (
-                  <>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Nombre</Label>
-                        <Input
-                          id="name"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName">Apellido</Label>
-                        <Input
-                          id="lastName"
-                          value={lastName}
-                          onChange={(e) => setLastName(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-end space-x-4">
-                      <Button
-                        variant="outline"
-                        onClick={() => setEditing(false)}
-                        disabled={loading}
-                      >
-                        Cancelar
-                      </Button>
-                      
-                      <Button
-                        onClick={handleUpdateProfile}
-                        disabled={loading}
-                        className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]"
-                      >
-                        {loading ? "Guardando..." : "Guardar cambios"}
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div>
-                        <p className="text-sm font-medium text-gray-500">Nombre</p>
-                        <p className="text-lg font-medium">{name}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm font-medium text-gray-500">Apellido</p>
-                        <p className="text-lg font-medium">{lastName}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="pt-4">
-                      <Button
-                        onClick={() => setEditing(true)}
-                        className="bg-gradient-to-r from-[#2ecc71] to-[#3498db] hover:from-[#27ae60] hover:to-[#2980b9]"
-                      >
-                        Editar perfil
-                      </Button>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Cambiar Contraseña</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PasswordChangeForm />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
