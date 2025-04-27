@@ -7,8 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRound, Search, Heart, HeartOff } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { navigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Artists = () => {
   const [artists, setArtists] = useState<Artist[]>([]);
@@ -18,6 +18,7 @@ const Artists = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userType, setUserType] = useState<string | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserSession = async () => {

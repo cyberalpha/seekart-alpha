@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -60,7 +59,6 @@ const Events = () => {
         const { data, error } = await query;
         
         if (error) throw error;
-        
         setEvents(data || []);
       } catch (error) {
         console.error("Error fetching events:", error);
