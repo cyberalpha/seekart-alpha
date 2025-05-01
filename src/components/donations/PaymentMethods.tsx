@@ -62,7 +62,7 @@ const PaymentMethods = () => {
 
       <Card className="shadow-md hover:shadow-lg transition-all border-seekart-green/10">
         <CardHeader className="bg-gradient-to-r from-seekart-green/5 to-white">
-          <CardTitle>Transferencia Bancaria</CardTitle>
+          <CardTitle>Transferencia Bancaria U$S</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
           <div className="space-y-2">
