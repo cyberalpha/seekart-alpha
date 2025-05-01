@@ -1,31 +1,25 @@
-
 import Navbar from "@/components/Navbar";
 import DonationHeader from "@/components/donations/DonationHeader";
 import PaymentMethods from "@/components/donations/PaymentMethods";
 import SocialShare from "@/components/donations/SocialShare";
 import ThankYouMessage from "@/components/donations/ThankYouMessage";
-
 const Donations = () => {
   // URL y título para compartir
   const shareUrl = window.location.href;
   const shareTitle = "Apoya a SeekArt con tu donación";
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+  return <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
       <Navbar />
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <DonationHeader />
         <PaymentMethods />
         <div className="mt-8">
-          <h2 className="text-xl font-bold mb-4 text-center">Comparte esta página</h2>
+          
           <div className="flex justify-center">
             <SocialShare />
           </div>
         </div>
         <ThankYouMessage />
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Donations;
