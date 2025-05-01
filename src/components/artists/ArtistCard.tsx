@@ -6,14 +6,35 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Artist } from "@/integrations/supabase/client";
 import { UserRound, Heart, HeartOff, Facebook, Instagram } from "lucide-react";
 
-// Mapeo de tipos de arte a colores de SeekArt
+// Mapeo de tipos de arte a colores de SeekArt con soporte para variaciones
 const artTypeColors: { [key: string]: string } = {
+  // Música (con variaciones)
   "Música": "bg-seekart-green hover:bg-seekart-green/90",
+  "Musica": "bg-seekart-green hover:bg-seekart-green/90",
+  "música": "bg-seekart-green hover:bg-seekart-green/90",
+  "musica": "bg-seekart-green hover:bg-seekart-green/90",
+  
+  // Teatro (con variaciones)
   "Teatro": "bg-seekart-yellow hover:bg-seekart-yellow/90",
+  "teatro": "bg-seekart-yellow hover:bg-seekart-yellow/90",
+  
+  // Visual (con variaciones)
   "Visual": "bg-seekart-red hover:bg-seekart-red/90",
+  "visual": "bg-seekart-red hover:bg-seekart-red/90",
+  
+  // Literatura/Letras (con variaciones)
   "Literatura": "bg-seekart-blue hover:bg-seekart-blue/90",
+  "literatura": "bg-seekart-blue hover:bg-seekart-blue/90",
+  "Letras": "bg-seekart-blue hover:bg-seekart-blue/90",
+  "letras": "bg-seekart-blue hover:bg-seekart-blue/90",
+  
+  // Cine (con variaciones)
   "Cine": "bg-seekart-orange hover:bg-seekart-orange/90",
-  "Otros": "bg-seekart-purple hover:bg-seekart-purple/90"
+  "cine": "bg-seekart-orange hover:bg-seekart-orange/90",
+  
+  // Otros (con variaciones)
+  "Otros": "bg-seekart-purple hover:bg-seekart-purple/90",
+  "otros": "bg-seekart-purple hover:bg-seekart-purple/90"
 };
 
 interface ArtistCardProps {
@@ -24,9 +45,10 @@ interface ArtistCardProps {
 }
 
 export const ArtistCard = ({ artist, userType, onFollow, onUnfollow }: ArtistCardProps) => {
-  // Función auxiliar para obtener el color del badge
+  // Función mejorada para obtener el color del badge, con normalización
   const getBadgeColor = (artType: string) => {
-    return artTypeColors[artType] || "bg-seekart-purple hover:bg-seekart-purple/90";
+    // Buscar el color directamente o con la versión en minúscula
+    return artTypeColors[artType] || artTypeColors[artType.toLowerCase()] || "bg-seekart-purple hover:bg-seekart-purple/90";
   };
 
   return (
