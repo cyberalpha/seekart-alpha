@@ -95,7 +95,7 @@ const EventDetail = () => {
           <div className="md:col-span-8">
             <Card>
               <div className="aspect-video w-full overflow-hidden">
-                <img src={event.image_url} alt={event.title} className="h-full w-full object-cover" />
+                <img src={eventImageUrl} alt={event.title} className="h-full w-full object-cover" />
               </div>
               
               <CardContent className="p-6">
