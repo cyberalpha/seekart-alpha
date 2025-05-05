@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => ({
     ]
   },
   define: {
-    // Define the missing __WS_TOKEN__ variable
+    // Define environment variables properly using string values
     __WS_TOKEN__: JSON.stringify("development-token"),
   },
   plugins: [
