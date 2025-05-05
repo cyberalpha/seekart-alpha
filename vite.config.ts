@@ -17,6 +17,13 @@ export default defineConfig(({ mode }) => ({
       clientPort: 8080, // Ensure client and server use same port
       overlay: true, // Enable error overlay
     },
+    // Añadir hosts permitidos para solucionar el problema de "Blocked request"
+    allowedHosts: [
+      // Permitir el host específico mencionado en el error
+      'a9a7bf4a-ae3f-4df0-974c-fa630b8660fd.lovableproject.com',
+      // Permitir cualquier subdominio de lovableproject.com
+      '.lovableproject.com'
+    ]
   },
   define: {
     // Define the missing __WS_TOKEN__ variable
