@@ -26,8 +26,9 @@ export default defineConfig(({ mode }) => ({
     ]
   },
   define: {
-    // Define environment variables properly using string values
-    __WS_TOKEN__: JSON.stringify("development-token"),
+    // Properly string encode all environment variables to prevent syntax errors
+    __WS_TOKEN__: '"development-token"',
+    'process.env': {}
   },
   plugins: [
     react(),
