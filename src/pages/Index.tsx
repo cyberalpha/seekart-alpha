@@ -2,9 +2,16 @@ import Navbar from "@/components/Navbar";
 import MetaTags from "@/components/shared/MetaTags";
 
 const Index = () => {
+  // Configuramos URLs absolutas para compartir
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://seekart.lovable.app';
+  const shareImageUrl = `${baseUrl}/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png`;
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#9b87f5]/10 via-[#4192FE]/5 to-white">
-      <MetaTags />
+      <MetaTags 
+        imageUrl={shareImageUrl}
+        url={baseUrl}
+      />
       <Navbar />
       
       {/* Hero Section */}

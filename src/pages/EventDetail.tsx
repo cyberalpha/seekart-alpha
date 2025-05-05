@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,18 +13,22 @@ import { SocialShare } from "@/components/social/SocialShare";
 import MetaTags from "@/components/shared/MetaTags";
 
 const EventDetail = () => {
-  const {
-    eventId
-  } = useParams();
+  const { eventId } = useParams();
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Configuramos URLs absolutas para compartir
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://seekart.lovable.app';
+  
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const {
-          data,
-          error
-        } = await supabase.from('events').select('*, artists(*)').eq('id', eventId).single();
+        const { data, error } = await supabase
+          .from('events')
+          .select('*, artists(*)')
+          .eq('id', eventId)
+          .single();
+          
         if (error) throw error;
         setEvent(data);
       } catch (error) {
@@ -32,26 +37,39 @@ const EventDetail = () => {
         setLoading(false);
       }
     };
+    
     fetchEvent();
   }, [eventId]);
+  
   if (loading) {
-    return <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
         <Navbar />
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
           <p>Cargando evento...</p>
         </div>
-      </div>;
+      </div>
+    );
   }
+  
   if (!event) {
-    return <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
         <Navbar />
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
           <p>Evento no encontrado</p>
         </div>
-      </div>;
+      </div>
+    );
   }
+  
+  // URL absoluta para la imagen del evento
+  const eventImageUrl = event.image_url?.startsWith('http') 
+    ? event.image_url 
+    : `${baseUrl}${event.image_url}`;
+  
   // URL y título para compartir
-  const shareUrl = window.location.href;
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : `${baseUrl}/events/${eventId}`;
   const shareTitle = event.title;
 
   return (
@@ -59,7 +77,8 @@ const EventDetail = () => {
       <MetaTags 
         title={`${event.title} - SeekArt`}
         description={event.description ? event.description.substring(0, 160) : "Evento de SeekArt"}
-        imageUrl={event.image_url}
+        imageUrl={eventImageUrl}
+        url={shareUrl}
         type="article"
       />
       <Navbar />
