@@ -1,6 +1,10 @@
 import Navbar from "@/components/Navbar";
+import MetaTags from "@/components/shared/MetaTags";
+
 const Index = () => {
-  return <div className="min-h-screen bg-gradient-to-b from-[#9b87f5]/10 via-[#4192FE]/5 to-white">
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#9b87f5]/10 via-[#4192FE]/5 to-white">
+      <MetaTags />
       <Navbar />
       
       {/* Hero Section */}
@@ -48,6 +52,8 @@ const Index = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;

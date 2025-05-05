@@ -4,10 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Link, Video } from "lucide-react";
+import { Calendar, MapPin, Link, Video, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { artTypes } from "./ArtistProfile";
+import { SocialShare } from "@/components/social/SocialShare";
+import MetaTags from "@/components/shared/MetaTags";
+
 const EventDetail = () => {
   const {
     eventId
@@ -47,7 +50,18 @@ const EventDetail = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+  // URL y título para compartir
+  const shareUrl = window.location.href;
+  const shareTitle = event.title;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+      <MetaTags 
+        title={`${event.title} - SeekArt`}
+        description={event.description ? event.description.substring(0, 160) : "Evento de SeekArt"}
+        imageUrl={event.image_url}
+        type="article"
+      />
       <Navbar />
       
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
@@ -134,9 +148,23 @@ const EventDetail = () => {
                   </Button>}
               </CardContent>
             </Card>
+            
+            {/* Add sharing options */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Compartir evento</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex justify-center">
+                  <SocialShare url={shareUrl} title={shareTitle} />
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default EventDetail;
