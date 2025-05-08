@@ -1,17 +1,11 @@
 import Navbar from "@/components/Navbar";
 import MetaTags from "@/components/shared/MetaTags";
-
 const Index = () => {
   // Configuramos URLs absolutas para compartir
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://seekart.lovable.app';
   const shareImageUrl = `${baseUrl}/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png`;
-  
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-[#9b87f5]/10 via-[#4192FE]/5 to-white">
-      <MetaTags 
-        imageUrl={shareImageUrl}
-        url={baseUrl}
-      />
+  return <div className="min-h-screen bg-gradient-to-b from-[#9b87f5]/10 via-[#4192FE]/5 to-white">
+      <MetaTags imageUrl={shareImageUrl} url={baseUrl} />
       <Navbar />
       
       {/* Hero Section */}
@@ -19,7 +13,7 @@ const Index = () => {
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="flex justify-center">
-              <img src="/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png" alt="SeekArt Logo" className="h-60 w-auto mb-8 object-cover hover:scale-110 transition-transform duration-500" />
+              <img src="/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png" alt="SeekArt Logo" className="h-60 w-auto mb-8 hover:scale-110 transition-transform duration-500 object-contain" />
             </div>
             <p className="mt-6 leading-8 text-center text-2xl font-bold text-slate-900">EN BUSCA DEL ARTE </p>
             <p className="mt-6 text-xl leading-8 text-sky-950 text-center">Descubre y conecta con artistas locales. </p>
@@ -59,8 +53,6 @@ const Index = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
