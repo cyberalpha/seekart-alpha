@@ -12,9 +12,9 @@ const SystemCheck = () => {
         {/* Logo image added between title and database status */}
         <div className="flex justify-center mb-10">
           <img 
-            src="/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png" 
-            alt="SeekArt Logo y QR" 
-            className="h-60 w-auto object-contain hover:scale-105 transition-transform duration-300"
+            src="/lovable-uploads/b06d1bd3-7313-4745-a478-2ed9dd18cbd4.png" 
+            alt="SeekArt Logo y Mascota" 
+            className="h-auto max-w-full md:max-w-lg object-contain hover:scale-105 transition-transform duration-300"
           />
         </div>
         
