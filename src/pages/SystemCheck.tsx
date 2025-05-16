@@ -1,6 +1,7 @@
 
 import SupabaseConnectionCheck from "@/components/SupabaseConnectionCheck";
 import Navbar from "@/components/Navbar";
+import StorageBucketInitializer from "@/components/StorageBucketInitializer";
 
 const SystemCheck = () => {
   return (
@@ -19,6 +20,7 @@ const SystemCheck = () => {
         </div>
         
         <SupabaseConnectionCheck />
+        <StorageBucketInitializer />
       </div>
     </div>
   );
