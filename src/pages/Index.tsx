@@ -13,7 +13,7 @@ const Index = () => {
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="flex justify-center">
-              <img src="/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png" alt="SeekArt Logo" className="h-60 w-auto mb-8 hover:scale-110 transition-transform duration-500 object-contain" />
+              <img alt="SeekArt Logo" className="h-60 w-auto mb-8 hover:scale-110 transition-transform duration-500 object-contain" src="/lovable-uploads/bbdfed6c-5752-4f24-acde-3e2e0ec6e502.png" />
             </div>
             <p className="mt-6 leading-8 text-center text-2xl font-bold text-slate-900">EN BUSCA DEL ARTE </p>
             <p className="mt-6 text-xl leading-8 text-sky-950 text-center">Descubre y conecta con artistas locales. </p>
