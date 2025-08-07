@@ -102,6 +102,7 @@ const Auth = () => {
           email,
           password,
           options: {
+            emailRedirectTo: `${window.location.origin}/`,
             data: {
               user_type: userType,
               name,

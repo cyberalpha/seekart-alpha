@@ -23,9 +23,34 @@ export const PasswordChangeForm = () => {
       return;
     }
 
+    if (newPassword.length < 6) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "La nueva contraseña debe tener al menos 6 caracteres",
+      });
+      return;
+    }
+
     try {
       setLoading(true);
       
+      // First verify current password by attempting to sign in
+      const { error: verifyError } = await supabase.auth.signInWithPassword({
+        email: (await supabase.auth.getUser()).data.user?.email || '',
+        password: currentPassword
+      });
+      
+      if (verifyError) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "La contraseña actual es incorrecta",
+        });
+        return;
+      }
+      
+      // If verification successful, update password
       const { error } = await supabase.auth.updateUser({
         password: newPassword
       });
