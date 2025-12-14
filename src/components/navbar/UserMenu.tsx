@@ -14,24 +14,28 @@ import {
 import { Session } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { UserRound } from "lucide-react";
+import { getVerifiedUserType, VerifiedUserType } from "@/lib/userTypeVerification";
 
 export const UserMenu = () => {
   const [session, setSession] = useState<Session | null>(null);
-  const [userType, setUserType] = useState<string | null>(null);
+  const [userType, setUserType] = useState<VerifiedUserType>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       
       if (session?.user) {
-        const userMetadata = session.user.user_metadata;
-        setUserType(userMetadata?.user_type || null);
+        // Use database verification instead of JWT metadata
+        const verifiedType = await getVerifiedUserType(session.user.id);
+        setUserType(verifiedType);
         
-        fetchProfileImage(session.user.id, userMetadata?.user_type);
+        if (verifiedType) {
+          fetchProfileImage(session.user.id, verifiedType);
+        }
       }
     });
 
@@ -41,10 +45,15 @@ export const UserMenu = () => {
       setSession(session);
       
       if (session?.user) {
-        const userMetadata = session.user.user_metadata;
-        setUserType(userMetadata?.user_type || null);
-        
-        fetchProfileImage(session.user.id, userMetadata?.user_type);
+        // Defer database verification to avoid deadlock
+        setTimeout(async () => {
+          const verifiedType = await getVerifiedUserType(session.user.id);
+          setUserType(verifiedType);
+          
+          if (verifiedType) {
+            fetchProfileImage(session.user.id, verifiedType);
+          }
+        }, 0);
       } else {
         setUserType(null);
         setProfileImage(null);
@@ -54,7 +63,7 @@ export const UserMenu = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchProfileImage = async (userId: string, userType: string | undefined) => {
+  const fetchProfileImage = async (userId: string, userType: VerifiedUserType) => {
     try {
       if (!userId || !userType) return;
       
