@@ -14,6 +14,7 @@ import { Plus } from "lucide-react";
 import { EventFilters } from "@/components/map/EventFilters";
 import { artTypes } from "@/components/map/data";
 import { ArtTypeId } from "@/components/map/types";
+import { getVerifiedUserType } from "@/lib/userTypeVerification";
 
 const Events = () => {
   const [events, setEvents] = useState<EventType[]>([]);
@@ -27,7 +28,9 @@ const Events = () => {
     const checkUserType = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        setIsArtist(session.user.user_metadata?.user_type === 'artist');
+        // Use database verification instead of JWT metadata
+        const verifiedType = await getVerifiedUserType(session.user.id);
+        setIsArtist(verifiedType === 'artist');
       }
     };
 

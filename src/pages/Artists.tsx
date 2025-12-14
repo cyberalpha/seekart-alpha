@@ -7,11 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search } from "lucide-react";
 import { ArtistCard } from "@/components/artists/ArtistCard";
 import { useArtists } from "@/hooks/useArtists";
+import { getVerifiedUserType, VerifiedUserType } from "@/lib/userTypeVerification";
 
 const Artists = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
-  const [userType, setUserType] = useState<string | null>(null);
+  const [userType, setUserType] = useState<VerifiedUserType>(null);
 
   useEffect(() => {
     const fetchUserSession = async () => {
@@ -19,8 +20,9 @@ const Artists = () => {
       
       if (session?.user) {
         setUserId(session.user.id);
-        const userMetadata = session.user.user_metadata;
-        setUserType(userMetadata?.user_type || null);
+        // Use database verification instead of JWT metadata
+        const verifiedType = await getVerifiedUserType(session.user.id);
+        setUserType(verifiedType);
       }
     };
 
