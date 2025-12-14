@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import { validatePassword } from "@/lib/passwordValidation";
 
 export const PasswordChangeForm = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -23,11 +23,13 @@ export const PasswordChangeForm = () => {
       return;
     }
 
-    if (newPassword.length < 6) {
+    // Validate password strength
+    const validation = validatePassword(newPassword);
+    if (!validation.valid) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "La nueva contraseña debe tener al menos 6 caracteres",
+        title: "Contraseña débil",
+        description: validation.error,
       });
       return;
     }
