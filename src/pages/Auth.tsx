@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +9,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserRound, Upload } from "lucide-react";
+import { validatePassword } from "@/lib/passwordValidation";
+import { getVerifiedUserType } from "@/lib/userTypeVerification";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -30,10 +31,11 @@ const Auth = () => {
 
   useEffect(() => {
     // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
-        const userType = session.user.user_metadata?.user_type;
-        navigate(userType === "artist" ? "/artist-profile" : "/fan-profile");
+        // Verify user type from database instead of trusting JWT metadata
+        const verifiedUserType = await getVerifiedUserType(session.user.id);
+        navigate(verifiedUserType === "artist" ? "/artist-profile" : "/fan-profile");
       }
     });
   }, [navigate]);
@@ -95,6 +97,12 @@ const Auth = () => {
         // Si es artista, validamos campos adicionales
         if (userType === "artist" && !description) {
           throw new Error("La descripción es requerida para artistas");
+        }
+
+        // Validate password strength
+        const passwordValidation = validatePassword(password);
+        if (!passwordValidation.valid) {
+          throw new Error(passwordValidation.error);
         }
 
         // Registrar usuario en Supabase Auth
@@ -167,8 +175,9 @@ const Auth = () => {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
-          const userType = session.user.user_metadata?.user_type;
-          navigate(userType === "artist" ? "/artist-profile" : "/fan-profile");
+          // Verify user type from database instead of trusting JWT metadata
+          const verifiedUserType = await getVerifiedUserType(session.user.id);
+          navigate(verifiedUserType === "artist" ? "/artist-profile" : "/fan-profile");
         } else {
           navigate("/");
         }
