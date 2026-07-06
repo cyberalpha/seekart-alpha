@@ -17,9 +17,11 @@ export const EventForm = ({
   submitButtonText,
   onCancel,
   loading,
-  uploading
+  uploading: externalUploading
 }: EventFormProps) => {
   const { formState, formSetters } = useEventForm(initialData);
+  const { handleImageUpload, uploading: internalUploading } = useImageUpload();
+  const uploading = externalUploading || internalUploading;
   
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
