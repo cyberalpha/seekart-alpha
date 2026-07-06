@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserRound, Upload } from "lucide-react";
 import { validatePassword } from "@/lib/passwordValidation";
 import { getVerifiedUserType } from "@/lib/userTypeVerification";
+import MetaTags from "@/components/shared/MetaTags";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -195,16 +196,22 @@ const Auth = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 p-4">
-      <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-6 shadow-lg">
+      <MetaTags
+        title={isSignUp ? "Crear cuenta - SeekArt" : "Iniciar sesión - SeekArt"}
+        description={isSignUp
+          ? "Regístrate en SeekArt como artista o seguidor para descubrir eventos culturales y conectar con la comunidad artística local."
+          : "Accede a tu cuenta de SeekArt para explorar artistas, eventos culturales y gestionar tu perfil."}
+      />
+      <main className="w-full max-w-md space-y-8 rounded-lg bg-white p-6 shadow-lg">
         <div className="text-center">
-          <img 
-            src="/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png" 
-            alt="SeekArt Logo" 
+          <img
+            src="/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png"
+            alt="SeekArt Logo"
             className="mx-auto h-24 w-auto"
           />
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            {isSignUp ? "Crear una cuenta" : "Iniciar sesión"}
-          </h2>
+          <h1 className="mt-6 text-3xl font-bold text-gray-900">
+            {isSignUp ? "Crear una cuenta en SeekArt" : "Iniciar sesión en SeekArt"}
+          </h1>
           <p className="mt-2 text-sm text-gray-600">
             {isSignUp
               ? "Regístrate para descubrir el arte cerca de ti"
