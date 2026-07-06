@@ -213,7 +213,7 @@ const EventDetail = () => {
             </Card>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
