@@ -193,7 +193,7 @@ const Events = () => {
             {events.map((event) => renderArtistCard(event))}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 };
