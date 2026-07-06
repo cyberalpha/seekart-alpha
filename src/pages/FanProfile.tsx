@@ -29,6 +29,12 @@ const FanProfile = () => {
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [editing, setEditing] = useState(false);
+  const [convertOpen, setConvertOpen] = useState(false);
+  const [converting, setConverting] = useState(false);
+  const [artistName, setArtistName] = useState("");
+  const [artistDescription, setArtistDescription] = useState("");
+  const [artistInstagram, setArtistInstagram] = useState("");
+  const [artistFacebook, setArtistFacebook] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
