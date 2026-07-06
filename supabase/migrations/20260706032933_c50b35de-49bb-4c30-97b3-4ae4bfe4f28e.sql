@@ -1,0 +1,1 @@
+CREATE POLICY "fans_delete_own" ON public.fans FOR DELETE TO authenticated USING (auth.uid() = id);

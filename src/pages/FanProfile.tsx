@@ -8,8 +8,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { UserRound, Upload } from "lucide-react";
+import { UserRound, Upload, Palette } from "lucide-react";
 import { PasswordChangeForm } from "@/components/profile/PasswordChangeForm";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const FanProfile = () => {
   const [loading, setLoading] = useState(true);
