@@ -15,6 +15,7 @@ import { EventFilters } from "@/components/map/EventFilters";
 import { artTypes } from "@/components/map/data";
 import { ArtTypeId } from "@/components/map/types";
 import { getVerifiedUserType } from "@/lib/userTypeVerification";
+import MetaTags from "@/components/shared/MetaTags";
 
 const Events = () => {
   const [events, setEvents] = useState<EventType[]>([]);
@@ -152,9 +153,13 @@ const Events = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+      <MetaTags
+        title="Próximos Eventos de Arte y Cultura - SeekArt"
+        description="Descubre próximos conciertos, exposiciones, obras de teatro y performances de artistas locales. Filtra por tipo de arte y encuentra tu próximo evento cultural."
+      />
       <Navbar />
-      
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900">Explorar Eventos</h1>
           
@@ -188,7 +193,7 @@ const Events = () => {
             {events.map((event) => renderArtistCard(event))}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 };
