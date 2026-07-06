@@ -9,6 +9,7 @@ import { EventLocationPicker } from "./EventLocationPicker";
 import { EventBasicInfo } from "./EventBasicInfo";
 import { EventLinks } from "./EventLinks";
 import { useEventForm } from "@/hooks/useEventForm";
+import { useImageUpload } from "@/hooks/useImageUpload";
 
 export const EventForm = ({ 
   initialData = {},
@@ -16,9 +17,11 @@ export const EventForm = ({
   submitButtonText,
   onCancel,
   loading,
-  uploading
+  uploading: externalUploading
 }: EventFormProps) => {
   const { formState, formSetters } = useEventForm(initialData);
+  const { handleImageUpload, uploading: internalUploading } = useImageUpload();
+  const uploading = externalUploading || internalUploading;
   
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,9 +103,8 @@ export const EventForm = ({
           <EventImageUploader
             imageUrl={formState.image_url}
             onImageUpload={async (e) => {
-              if (e.target.files?.[0]) {
-                formSetters.setImageUrl(URL.createObjectURL(e.target.files[0]));
-              }
+              const url = await handleImageUpload(e);
+              if (url) formSetters.setImageUrl(url);
             }}
             uploading={uploading}
           />
