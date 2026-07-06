@@ -48,8 +48,20 @@ export const useEventSubmit = (eventId?: string) => {
         return;
       }
       
+      const nullIfEmpty = (v: string) => (v && v.trim() !== "" ? v.trim() : null);
       const eventData = {
         ...formData,
+        description: nullIfEmpty(formData.description),
+        address: nullIfEmpty(formData.address),
+        city: nullIfEmpty(formData.city),
+        state: nullIfEmpty(formData.state),
+        country: nullIfEmpty(formData.country),
+        cross_street_1: nullIfEmpty(formData.cross_street_1),
+        cross_street_2: nullIfEmpty(formData.cross_street_2),
+        locality: nullIfEmpty(formData.locality),
+        ticket_url: nullIfEmpty(formData.ticket_url),
+        video_url: nullIfEmpty(formData.video_url),
+        type: formData.art_types[0] || formData.type,
         latitude: parseFloat(formData.latitude),
         longitude: parseFloat(formData.longitude),
         artist_id: session.user.id,
