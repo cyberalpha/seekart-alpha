@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -8,6 +7,7 @@ import { Search } from "lucide-react";
 import { ArtistCard } from "@/components/artists/ArtistCard";
 import { useArtists } from "@/hooks/useArtists";
 import { getVerifiedUserType, VerifiedUserType } from "@/lib/userTypeVerification";
+import MetaTags from "@/components/shared/MetaTags";
 
 const Artists = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -46,15 +46,25 @@ const Artists = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+      <MetaTags
+        title="Directorio de Artistas Locales - SeekArt"
+        description="Explora perfiles de artistas locales en SeekArt. Descubre músicos, pintores, actores y creadores emergentes cerca de ti."
+      />
       <Navbar />
-      
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <h1 className="mb-6 text-3xl font-bold text-gray-900">Explorar Artistas</h1>
-        
+
         <div className="mb-6 flex items-center">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" aria-hidden="true" />
+            <label htmlFor="artist-search" className="sr-only">
+              Buscar artistas
+            </label>
             <Input
+              id="artist-search"
+              type="search"
+              aria-label="Buscar artistas por nombre o descripción"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar artistas por nombre o descripción"
@@ -139,7 +149,7 @@ const Artists = () => {
             )}
           </>
         )}
-      </div>
+      </main>
     </div>
   );
 };
