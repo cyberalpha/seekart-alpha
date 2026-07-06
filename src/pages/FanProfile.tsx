@@ -379,6 +379,100 @@ const FanProfile = () => {
               <PasswordChangeForm />
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Palette className="h-5 w-5 text-[#9b59b6]" />
+                Convertir en cuenta de Artista
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4 text-sm text-gray-600">
+                ¿Eres artista? Convierte tu cuenta para poder crear y gestionar tus propios eventos.
+                Se conservará tu foto de perfil y se eliminará tu perfil de fan.
+              </p>
+              <Dialog open={convertOpen} onOpenChange={(open) => {
+                setConvertOpen(open);
+                if (open) {
+                  setArtistName(name || "");
+                }
+              }}>
+                <DialogTrigger asChild>
+                  <Button className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]">
+                    Convertir a Artista
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Convertir a cuenta de Artista</DialogTitle>
+                    <DialogDescription>
+                      Completa los datos requeridos para tu perfil artístico. Esta acción no se puede deshacer.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="space-y-4 py-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="artistName">Nombre artístico *</Label>
+                      <Input
+                        id="artistName"
+                        value={artistName}
+                        onChange={(e) => setArtistName(e.target.value)}
+                        placeholder="Nombre artístico o denominación"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="artistDescription">Descripción *</Label>
+                      <Textarea
+                        id="artistDescription"
+                        value={artistDescription}
+                        onChange={(e) => setArtistDescription(e.target.value)}
+                        placeholder="Breve descripción de tu arte"
+                        rows={3}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="artistInstagram">Instagram URL</Label>
+                      <Input
+                        id="artistInstagram"
+                        type="url"
+                        value={artistInstagram}
+                        onChange={(e) => setArtistInstagram(e.target.value)}
+                        placeholder="https://instagram.com/tu_perfil"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="artistFacebook">Facebook URL</Label>
+                      <Input
+                        id="artistFacebook"
+                        type="url"
+                        value={artistFacebook}
+                        onChange={(e) => setArtistFacebook(e.target.value)}
+                        placeholder="https://facebook.com/tu_perfil"
+                      />
+                    </div>
+                  </div>
+
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setConvertOpen(false)}
+                      disabled={converting}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      onClick={handleConvertToArtist}
+                      disabled={converting}
+                      className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]"
+                    >
+                      {converting ? "Convirtiendo..." : "Confirmar conversión"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
