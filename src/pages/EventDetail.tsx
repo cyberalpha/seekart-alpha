@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { artTypes } from "./ArtistProfile";
 import { SocialShare } from "@/components/social/SocialShare";
 import MetaTags from "@/components/shared/MetaTags";
+import { Helmet } from "react-helmet-async";
 
 const EventDetail = () => {
   const { eventId } = useParams();
