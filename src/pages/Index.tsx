@@ -11,6 +11,35 @@ const Index = () => {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://seekart.lovable.app';
   const shareImageUrl = `${baseUrl}/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png`;
 
+  const [isAuthed, setIsAuthed] = useState(false);
+  const [userType, setUserType] = useState<VerifiedUserType>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      setIsAuthed(!!session);
+      if (session?.user) {
+        setUserType(await getVerifiedUserType(session.user.id));
+      }
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setIsAuthed(!!session);
+      if (session?.user) {
+        setTimeout(async () => {
+          setUserType(await getVerifiedUserType(session.user.id));
+        }, 0);
+      } else {
+        setUserType(null);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const cta = !isAuthed
+    ? { to: "/auth", label: "Comenzar ahora" }
+    : userType === "artist"
+    ? { to: "/create-event", label: "Crear evento" }
+    : { to: "/events", label: "Explorar eventos" };
+
   const jsonLd = [
     {
       "@context": "https://schema.org",
