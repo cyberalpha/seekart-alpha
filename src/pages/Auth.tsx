@@ -389,7 +389,7 @@ const Auth = () => {
               : "¿No tienes una cuenta? Regístrate"}
           </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
