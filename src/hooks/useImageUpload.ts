@@ -15,9 +15,14 @@ export const useImageUpload = () => {
         return null;
       }
       
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.id) {
+        throw new Error("Debes iniciar sesión para subir imágenes.");
+      }
+
       const file = event.target.files[0];
       const fileExt = file.name.split(".").pop();
-      const filePath = `event-images/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      const filePath = `${session.user.id}/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
         .from("events")
