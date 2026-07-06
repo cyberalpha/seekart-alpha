@@ -8,8 +8,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { UserRound, Upload } from "lucide-react";
+import { UserRound, Upload, Palette } from "lucide-react";
 import { PasswordChangeForm } from "@/components/profile/PasswordChangeForm";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const FanProfile = () => {
   const [loading, setLoading] = useState(true);
@@ -19,6 +29,12 @@ const FanProfile = () => {
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [editing, setEditing] = useState(false);
+  const [convertOpen, setConvertOpen] = useState(false);
+  const [converting, setConverting] = useState(false);
+  const [artistName, setArtistName] = useState("");
+  const [artistDescription, setArtistDescription] = useState("");
+  const [artistInstagram, setArtistInstagram] = useState("");
+  const [artistFacebook, setArtistFacebook] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -79,6 +95,66 @@ const FanProfile = () => {
 
     fetchProfile();
   }, [navigate, toast]);
+
+  const handleConvertToArtist = async () => {
+    if (!artistName.trim() || !artistDescription.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Datos incompletos",
+        description: "El nombre artístico y la descripción son obligatorios.",
+      });
+      return;
+    }
+
+    try {
+      setConverting(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
+        return;
+      }
+
+      // Crear registro de artista con la información actual
+      const { error: insertError } = await supabase
+        .from("artists")
+        .insert({
+          id: session.user.id,
+          name: artistName.trim(),
+          last_name: lastName || null,
+          description: artistDescription.trim(),
+          instagram_url: artistInstagram.trim() || null,
+          facebook_url: artistFacebook.trim() || null,
+          profile_image: profileImageUrl,
+        });
+
+      if (insertError) throw insertError;
+
+      // Eliminar registro de fan
+      const { error: deleteError } = await supabase
+        .from("fans")
+        .delete()
+        .eq("id", session.user.id);
+
+      if (deleteError) throw deleteError;
+
+      toast({
+        title: "¡Ahora eres artista!",
+        description: "Tu cuenta se ha convertido correctamente.",
+      });
+
+      setConvertOpen(false);
+      navigate("/artist-profile");
+    } catch (error: any) {
+      console.error("Error converting to artist:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "No se pudo convertir la cuenta. Inténtalo de nuevo.",
+      });
+    } finally {
+      setConverting(false);
+    }
+  };
 
   const handleUpdateProfile = async () => {
     try {
@@ -301,6 +377,100 @@ const FanProfile = () => {
             </CardHeader>
             <CardContent>
               <PasswordChangeForm />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Palette className="h-5 w-5 text-[#9b59b6]" />
+                Convertir en cuenta de Artista
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4 text-sm text-gray-600">
+                ¿Eres artista? Convierte tu cuenta para poder crear y gestionar tus propios eventos.
+                Se conservará tu foto de perfil y se eliminará tu perfil de fan.
+              </p>
+              <Dialog open={convertOpen} onOpenChange={(open) => {
+                setConvertOpen(open);
+                if (open) {
+                  setArtistName(name || "");
+                }
+              }}>
+                <DialogTrigger asChild>
+                  <Button className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]">
+                    Convertir a Artista
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Convertir a cuenta de Artista</DialogTitle>
+                    <DialogDescription>
+                      Completa los datos requeridos para tu perfil artístico. Esta acción no se puede deshacer.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="space-y-4 py-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="artistName">Nombre artístico *</Label>
+                      <Input
+                        id="artistName"
+                        value={artistName}
+                        onChange={(e) => setArtistName(e.target.value)}
+                        placeholder="Nombre artístico o denominación"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="artistDescription">Descripción *</Label>
+                      <Textarea
+                        id="artistDescription"
+                        value={artistDescription}
+                        onChange={(e) => setArtistDescription(e.target.value)}
+                        placeholder="Breve descripción de tu arte"
+                        rows={3}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="artistInstagram">Instagram URL</Label>
+                      <Input
+                        id="artistInstagram"
+                        type="url"
+                        value={artistInstagram}
+                        onChange={(e) => setArtistInstagram(e.target.value)}
+                        placeholder="https://instagram.com/tu_perfil"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="artistFacebook">Facebook URL</Label>
+                      <Input
+                        id="artistFacebook"
+                        type="url"
+                        value={artistFacebook}
+                        onChange={(e) => setArtistFacebook(e.target.value)}
+                        placeholder="https://facebook.com/tu_perfil"
+                      />
+                    </div>
+                  </div>
+
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setConvertOpen(false)}
+                      disabled={converting}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      onClick={handleConvertToArtist}
+                      disabled={converting}
+                      className="bg-gradient-to-r from-[#e74c3c] to-[#9b59b6] hover:from-[#c0392b] hover:to-[#8e44ad]"
+                    >
+                      {converting ? "Convirtiendo..." : "Confirmar conversión"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
         </div>
