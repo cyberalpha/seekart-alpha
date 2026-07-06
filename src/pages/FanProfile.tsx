@@ -96,6 +96,66 @@ const FanProfile = () => {
     fetchProfile();
   }, [navigate, toast]);
 
+  const handleConvertToArtist = async () => {
+    if (!artistName.trim() || !artistDescription.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Datos incompletos",
+        description: "El nombre artístico y la descripción son obligatorios.",
+      });
+      return;
+    }
+
+    try {
+      setConverting(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
+        return;
+      }
+
+      // Crear registro de artista con la información actual
+      const { error: insertError } = await supabase
+        .from("artists")
+        .insert({
+          id: session.user.id,
+          name: artistName.trim(),
+          last_name: lastName || null,
+          description: artistDescription.trim(),
+          instagram_url: artistInstagram.trim() || null,
+          facebook_url: artistFacebook.trim() || null,
+          profile_image: profileImageUrl,
+        });
+
+      if (insertError) throw insertError;
+
+      // Eliminar registro de fan
+      const { error: deleteError } = await supabase
+        .from("fans")
+        .delete()
+        .eq("id", session.user.id);
+
+      if (deleteError) throw deleteError;
+
+      toast({
+        title: "¡Ahora eres artista!",
+        description: "Tu cuenta se ha convertido correctamente.",
+      });
+
+      setConvertOpen(false);
+      navigate("/artist-profile");
+    } catch (error: any) {
+      console.error("Error converting to artist:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "No se pudo convertir la cuenta. Inténtalo de nuevo.",
+      });
+    } finally {
+      setConverting(false);
+    }
+  };
+
   const handleUpdateProfile = async () => {
     try {
       setLoading(true);
