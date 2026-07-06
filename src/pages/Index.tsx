@@ -94,9 +94,10 @@ const Index = () => {
             <p className="mt-6 text-xl leading-8 text-sky-950 text-center">Descubre y conecta con artistas locales.</p>
             <p className="mt-6 text-xl leading-8 text-sky-950 text-center">Encuentra eventos únicos cerca de ti.</p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <a href="/auth" className="rounded-md bg-gradient-to-r from-seekart-green to-seekart-blue px-6 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105">
-                Comenzar ahora
-              </a>
+              <Link to={cta.to} className="rounded-md bg-gradient-to-r from-seekart-green to-seekart-blue px-6 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105">
+                {cta.label}
+              </Link>
+
               <a href="/events" className="text-sm font-semibold leading-6 text-gray-900 hover:text-seekart-blue transition-colors">
                 Ver eventos <span aria-hidden="true">→</span>
               </a>
