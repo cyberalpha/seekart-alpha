@@ -82,9 +82,40 @@ const EventDetail = () => {
         url={shareUrl}
         type="article"
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Event",
+          name: event.title,
+          description: event.description,
+          startDate: event.date,
+          image: eventImageUrl,
+          eventStatus: "https://schema.org/EventScheduled",
+          eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+          location: event.address ? {
+            "@type": "Place",
+            name: event.address,
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: event.address,
+              addressLocality: event.city || undefined,
+            },
+          } : undefined,
+          performer: event.artists?.name ? {
+            "@type": "PerformingGroup",
+            name: event.artists.name,
+          } : undefined,
+          organizer: {
+            "@type": "Organization",
+            name: "SeekArt",
+            url: "https://seekart.lovable.app",
+          },
+          url: shareUrl,
+        })}</script>
+      </Helmet>
       <Navbar />
-      
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+
+      <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">{event.title}</h1>
           <p className="mt-2 text-gray-600">
