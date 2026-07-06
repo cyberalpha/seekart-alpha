@@ -9,6 +9,7 @@ import { EventLocationPicker } from "./EventLocationPicker";
 import { EventBasicInfo } from "./EventBasicInfo";
 import { EventLinks } from "./EventLinks";
 import { useEventForm } from "@/hooks/useEventForm";
+import { useImageUpload } from "@/hooks/useImageUpload";
 
 export const EventForm = ({ 
   initialData = {},
