@@ -1,10 +1,44 @@
 import Navbar from "@/components/Navbar";
 import MetaTags from "@/components/shared/MetaTags";
 import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { getVerifiedUserType, VerifiedUserType } from "@/lib/userTypeVerification";
+
 
 const Index = () => {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://seekart.lovable.app';
   const shareImageUrl = `${baseUrl}/lovable-uploads/e83b09aa-b9e7-4ee0-9f5f-8b22288e2a55.png`;
+
+  const [isAuthed, setIsAuthed] = useState(false);
+  const [userType, setUserType] = useState<VerifiedUserType>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      setIsAuthed(!!session);
+      if (session?.user) {
+        setUserType(await getVerifiedUserType(session.user.id));
+      }
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setIsAuthed(!!session);
+      if (session?.user) {
+        setTimeout(async () => {
+          setUserType(await getVerifiedUserType(session.user.id));
+        }, 0);
+      } else {
+        setUserType(null);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const cta = !isAuthed
+    ? { to: "/auth", label: "Comenzar ahora" }
+    : userType === "artist"
+    ? { to: "/create-event", label: "Crear evento" }
+    : { to: "/events", label: "Explorar eventos" };
 
   const jsonLd = [
     {
@@ -60,9 +94,10 @@ const Index = () => {
             <p className="mt-6 text-xl leading-8 text-sky-950 text-center">Descubre y conecta con artistas locales.</p>
             <p className="mt-6 text-xl leading-8 text-sky-950 text-center">Encuentra eventos únicos cerca de ti.</p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <a href="/auth" className="rounded-md bg-gradient-to-r from-seekart-green to-seekart-blue px-6 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105">
-                Comenzar ahora
-              </a>
+              <Link to={cta.to} className="rounded-md bg-gradient-to-r from-seekart-green to-seekart-blue px-6 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105">
+                {cta.label}
+              </Link>
+
               <a href="/events" className="text-sm font-semibold leading-6 text-gray-900 hover:text-seekart-blue transition-colors">
                 Ver eventos <span aria-hidden="true">→</span>
               </a>
