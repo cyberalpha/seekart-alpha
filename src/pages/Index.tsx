@@ -1,6 +1,11 @@
 import Navbar from "@/components/Navbar";
 import MetaTags from "@/components/shared/MetaTags";
 import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { getVerifiedUserType, VerifiedUserType } from "@/lib/userTypeVerification";
+
 
 const Index = () => {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://seekart.lovable.app';
