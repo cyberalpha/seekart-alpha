@@ -103,9 +103,8 @@ export const EventForm = ({
           <EventImageUploader
             imageUrl={formState.image_url}
             onImageUpload={async (e) => {
-              if (e.target.files?.[0]) {
-                formSetters.setImageUrl(URL.createObjectURL(e.target.files[0]));
-              }
+              const url = await handleImageUpload(e);
+              if (url) formSetters.setImageUrl(url);
             }}
             uploading={uploading}
           />
