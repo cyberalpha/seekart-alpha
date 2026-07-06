@@ -1,0 +1,11 @@
+# SeekArt
+
+> Plataforma para descubrir artistas locales y eventos culturales cerca de ti.
+
+SeekArt (En busca del Arte) conecta artistas emergentes y establecidos con seguidores. Los usuarios pueden explorar perfiles de artistas, encontrar eventos culturales (música, teatro, artes visuales, letras, cine) en un mapa interactivo y apoyar el desarrollo de la plataforma mediante donaciones.
+
+## Pages
+
+- [Inicio](/): Página principal con introducción a la plataforma y accesos rápidos.
+- [Iniciar sesión / Registro](/auth): Crear una cuenta como artista o seguidor.
+- [Donaciones](/donations): Apoya el desarrollo de SeekArt mediante donaciones en criptomonedas.
